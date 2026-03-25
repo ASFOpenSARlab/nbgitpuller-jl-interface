@@ -3,7 +3,7 @@ import json
 
 async def test_hello(jp_fetch):
     # When
-    response = await jp_fetch("nbgitpuller-jb-interface", "hello")
+    response = await jp_fetch("nbgitpuller-jl-interface", "hello")
 
     # Then
     assert response.code == 200
@@ -11,7 +11,7 @@ async def test_hello(jp_fetch):
     assert payload == {
             "data": (
                 "Hello, world!"
-                " This is the '/nbgitpuller-jb-interface/hello' endpoint."
+                " This is the '/nbgitpuller-jl-interface/hello' endpoint."
                 " Try visiting me in your browser!"
             ),
         }

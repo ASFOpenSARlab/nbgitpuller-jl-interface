@@ -18,7 +18,7 @@ export async function requestAPI<T>(
   // Make request to Jupyter API
   const requestUrl = URLExt.join(
     serverSettings.baseUrl,
-    'nbgitpuller-jb-interface', // our server extension's API namespace
+    'nbgitpuller-jl-interface', // our server extension's API namespace
     endPoint
   );
 

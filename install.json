@@ -1,5 +1,5 @@
 {
   "packageManager": "python",
-  "packageName": "nbgitpuller_jb_interface",
-  "uninstallInstructions": "Use your Python package manager (pip, conda, etc.) to uninstall the package nbgitpuller_jb_interface"
+  "packageName": "nbgitpuller_jl_interface",
+  "uninstallInstructions": "Use your Python package manager (pip, conda, etc.) to uninstall the package nbgitpuller_jl_interface"
 }

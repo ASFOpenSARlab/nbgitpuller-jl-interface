@@ -13,8 +13,8 @@ class HelloRouteHandler(APIHandler):
         self.finish(json.dumps({
             "data": (
                 "Hello, world!"
-                " This is the '/nbgitpuller-jb-interface/hello' endpoint."
-                " Try visiting me in your browser!"
+                " This is the '/nbgitpuller-jl-interface/hello' endpoint."
+                " Try visiting me in your browser! Try it1"
             ),
         }))
 
@@ -23,7 +23,7 @@ def setup_route_handlers(web_app):
     host_pattern = ".*$"
     base_url = web_app.settings["base_url"]
 
-    hello_route_pattern = url_path_join(base_url, "nbgitpuller-jb-interface", "hello")
+    hello_route_pattern = url_path_join(base_url, "nbgitpuller-jl-interface", "hello")
     handlers = [(hello_route_pattern, HelloRouteHandler)]
 
     web_app.add_handlers(host_pattern, handlers)

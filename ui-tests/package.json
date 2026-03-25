@@ -1,7 +1,7 @@
 {
-  "name": "nbgitpuller-jb-interface-ui-tests",
+  "name": "nbgitpuller-jl-interface-ui-tests",
   "version": "1.0.0",
-  "description": "JupyterLab nbgitpuller-jb-interface Integration Tests",
+  "description": "JupyterLab nbgitpuller-jl-interface Integration Tests",
   "private": true,
   "scripts": {
     "start": "jupyter lab --config jupyter_server_test_config.py",

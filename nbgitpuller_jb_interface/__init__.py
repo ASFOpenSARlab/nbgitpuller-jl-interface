@@ -5,7 +5,7 @@ except ImportError:
     # in editable mode with pip. It is highly recommended to install
     # the package from a stable release or in editable mode: https://pip.pypa.io/en/stable/topics/local-project-installs/#editable-installs
     import warnings
-    warnings.warn("Importing 'nbgitpuller_jb_interface' outside a proper installation.")
+    warnings.warn("Importing 'nbgitpuller_jl_interface' outside a proper installation.")
     __version__ = "dev"
 from .routes import setup_route_handlers
 
@@ -13,13 +13,13 @@ from .routes import setup_route_handlers
 def _jupyter_labextension_paths():
     return [{
         "src": "labextension",
-        "dest": "nbgitpuller-jb-interface"
+        "dest": "nbgitpuller-jl-interface"
     }]
 
 
 def _jupyter_server_extension_points():
     return [{
-        "module": "nbgitpuller_jb_interface"
+        "module": "nbgitpuller_jl_interface"
     }]
 
 
@@ -32,5 +32,5 @@ def _load_jupyter_server_extension(server_app):
         JupyterLab application instance
     """
     setup_route_handlers(server_app.web_app)
-    name = "nbgitpuller_jb_interface"
+    name = "nbgitpuller_jl_interface"
     server_app.log.info(f"Registered {name} server extension")

@@ -1,13 +1,13 @@
-# nbgitpuller_jb_interface
+# nbgitpuller_jl_interface
 
-[![Github Actions Status](https://github.com/ASFOpenSARlab/nbgitpuller-jb-interface/workflows/Build/badge.svg)](https://github.com/ASFOpenSARlab/nbgitpuller-jb-interface/actions/workflows/build.yml)
-[![Binder](https://mybinder.org/badge_logo.svg)](https://mybinder.org/v2/gh/ASFOpenSARlab/nbgitpuller-jb-interface/main?urlpath=lab)
+[![Github Actions Status](https://github.com/ASFOpenSARlab/nbgitpuller-jl-interface/workflows/Build/badge.svg)](https://github.com/ASFOpenSARlab/nbgitpuller-jl-interface/actions/workflows/build.yml)
+[![Binder](https://mybinder.org/badge_logo.svg)](https://mybinder.org/v2/gh/ASFOpenSARlab/nbgitpuller-jl-interface/main?urlpath=lab)
 
 
 A human interface with nbgitpuller in JupyterBook
 
-This extension is composed of a Python package named `nbgitpuller_jb_interface`
-for the server extension and a NPM package named `nbgitpuller-jb-interface`
+This extension is composed of a Python package named `nbgitpuller_jl_interface`
+for the server extension and a NPM package named `nbgitpuller-jl-interface`
 for the frontend extension.
 
 ## Requirements
@@ -19,7 +19,7 @@ for the frontend extension.
 To install the extension, execute:
 
 ```bash
-pip install nbgitpuller_jb_interface
+pip install nbgitpuller_jl_interface
 ```
 
 ## Uninstall
@@ -27,7 +27,7 @@ pip install nbgitpuller_jb_interface
 To remove the extension, execute:
 
 ```bash
-pip uninstall nbgitpuller_jb_interface
+pip uninstall nbgitpuller_jl_interface
 ```
 
 ## Troubleshoot
@@ -58,7 +58,7 @@ The `jlpm` command is JupyterLab's pinned version of
 
 ```bash
 # Clone the repo to your local environment
-# Change directory to the nbgitpuller_jb_interface directory
+# Change directory to the nbgitpuller_jl_interface directory
 
 # Set up a virtual environment and install package in development mode
 python -m venv .venv
@@ -68,7 +68,7 @@ pip install --editable ".[dev,test]"
 # Link your development version of the extension with JupyterLab
 jupyter labextension develop . --overwrite
 # Server extension must be manually installed in develop mode
-jupyter server extension enable nbgitpuller_jb_interface
+jupyter server extension enable nbgitpuller_jl_interface
 
 # Rebuild extension Typescript source after making changes
 # IMPORTANT: Unlike the steps above which are performed only once, do this step
@@ -97,13 +97,13 @@ jupyter lab build --minimize=False
 
 ```bash
 # Server extension must be manually disabled in develop mode
-jupyter server extension disable nbgitpuller_jb_interface
-pip uninstall nbgitpuller_jb_interface
+jupyter server extension disable nbgitpuller_jl_interface
+pip uninstall nbgitpuller_jl_interface
 ```
 
 In development mode, you will also need to remove the symlink created by `jupyter labextension develop`
 command. To find its location, you can run `jupyter labextension list` to figure out where the `labextensions`
-folder is located. Then you can remove the symlink named `nbgitpuller-jb-interface` within that folder.
+folder is located. Then you can remove the symlink named `nbgitpuller-jl-interface` within that folder.
 
 ### Testing the extension
 
@@ -122,7 +122,7 @@ jupyter labextension develop . --overwrite
 To execute them, run:
 
 ```sh
-pytest -vv -r ap --cov nbgitpuller_jb_interface
+pytest -vv -r ap --cov nbgitpuller_jl_interface
 ```
 
 #### Frontend tests

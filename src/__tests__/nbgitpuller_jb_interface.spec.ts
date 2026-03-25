@@ -2,7 +2,7 @@
  * Example of [Jest](https://jestjs.io/docs/getting-started) unit tests
  */
 
-describe('nbgitpuller-jb-interface', () => {
+describe('nbgitpuller-jl-interface', () => {
   it('should be tested', () => {
     expect(1 + 1).toEqual(2);
   });

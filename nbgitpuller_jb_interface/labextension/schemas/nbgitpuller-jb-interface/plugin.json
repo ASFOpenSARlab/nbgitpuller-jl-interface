@@ -1,7 +1,7 @@
 {
   "jupyter.lab.shortcuts": [],
-  "title": "nbgitpuller-jl-interface",
-  "description": "nbgitpuller-jl-interface settings.",
+  "title": "nbgitpuller-jb-interface",
+  "description": "nbgitpuller-jb-interface settings.",
   "type": "object",
   "properties": {},
   "additionalProperties": false

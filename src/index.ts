@@ -1,43 +1,74 @@
 import {
+  ILabShell,
   JupyterFrontEnd,
   JupyterFrontEndPlugin
 } from '@jupyterlab/application';
 
+import { Widget } from '@lumino/widgets';
+
 import { ISettingRegistry } from '@jupyterlab/settingregistry';
 
-import { requestAPI } from './request';
+// import { requestAPI } from './request';
 
 /**
- * Initialization data for the nbgitpuller-jb-interface extension.
+ * Initialization data for the nbgitpuller-jl-interface extension.
  */
+
+let appInstance: JupyterFrontEnd | null = null;
+
+export function getJupyterAppInstance(app?: JupyterFrontEnd): JupyterFrontEnd {
+  if (!appInstance && app) {
+    appInstance = app;
+  }
+  if (!appInstance) {
+    throw new Error('App instance has not been initialized yet');
+  }
+  return appInstance;
+}
+
 const plugin: JupyterFrontEndPlugin<void> = {
-  id: 'nbgitpuller-jb-interface:plugin',
+  id: 'nbgitpuller-jl-interface:plugin',
   description: 'A human interface with nbgitpuller in JupyterBook',
   autoStart: true,
   optional: [ISettingRegistry],
-  activate: (app: JupyterFrontEnd, settingRegistry: ISettingRegistry | null) => {
-    console.log('JupyterLab extension nbgitpuller-jb-interface is activated!');
+  requires: [ILabShell],
+  activate: (app: JupyterFrontEnd, shell: ILabShell, settingRegistry: ISettingRegistry | null) => {
+    console.log('JupyterLab extension nbgitpuller-jl-interface is activated!');
 
     if (settingRegistry) {
       settingRegistry
         .load(plugin.id)
         .then(settings => {
-          console.log('nbgitpuller-jb-interface settings loaded:', settings.composite);
+          console.log('nbgitpuller-jl-interface settings loaded:', settings.composite);
         })
         .catch(reason => {
-          console.error('Failed to load settings for nbgitpuller-jb-interface.', reason);
+          console.error('Failed to load settings for nbgitpuller-jl-interface.', reason);
         });
     }
 
-    requestAPI<any>('hello', app.serviceManager.serverSettings)
-      .then(data => {
-        console.log(data);
-      })
-      .catch(reason => {
-        console.error(
-          `The nbgitpuller_jb_interface server extension appears to be missing.\n${reason}`
-        );
-      });
+    // requestAPI<any>('hello', app.serviceManager.serverSettings)
+    //   .then(data => {
+    //     console.log(data);
+    //   })
+    //   .catch(reason => {
+    //     console.error(
+    //       `The nbgitpuller_jl_interface server extension appears to be missing.\n${reason}`
+    //     );
+    //   });
+    console.log("Grooble")
+
+    const widget = new Widget();
+    widget.id = '@jupyterlab-sidepanel/nbgitpuller-jl-interface';
+    widget.title.iconClass = 'jbook-icon2 jp-SideBar-tabIcon';
+    widget.title.className = 'jbook-tab';
+    widget.title.caption = 'NBGitpuller';
+
+    const summary = document.createElement('p');
+      summary.innerHTML = "This is a thing.";
+    widget.node.appendChild(summary);
+
+    shell.add(widget, 'left', { rank: 400 });
+    widget.activate();
   }
 };
 

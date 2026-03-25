@@ -1,10 +1,10 @@
-# a mybinder.org-ready environment for demoing nbgitpuller_jb_interface
+# a mybinder.org-ready environment for demoing nbgitpuller_jl_interface
 # this environment may also be used locally on Linux/MacOS/Windows, e.g.
 #
 #   conda env update --file binder/environment.yml
-#   conda activate nbgitpuller-jb-interface-demo
+#   conda activate nbgitpuller-jl-interface-demo
 #
-name: nbgitpuller-jb-interface-demo
+name: nbgitpuller-jl-interface-demo
 
 channels:
   - conda-forge

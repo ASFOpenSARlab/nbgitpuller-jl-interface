@@ -1,4 +1,4 @@
-# Making a new release of nbgitpuller_jb_interface
+# Making a new release of nbgitpuller_jl_interface
 
 The extension can be published to `PyPI` and `npm` manually or using the [Jupyter Releaser](https://github.com/jupyter-server/jupyter_releaser).
 

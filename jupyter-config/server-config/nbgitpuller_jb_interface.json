@@ -1,7 +1,7 @@
 {
   "ServerApp": {
     "jpserver_extensions": {
-      "nbgitpuller_jb_interface": true
+      "nbgitpuller_jl_interface": true
     }
   }
 }

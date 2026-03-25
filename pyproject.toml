@@ -3,7 +3,7 @@ requires = ["hatchling>=1.5.0", "jupyterlab>=4.0.0,<5", "hatch-nodejs-version>=0
 build-backend = "hatchling.build"
 
 [project]
-name = "nbgitpuller_jb_interface"
+name = "nbgitpuller_jl_interface"
 readme = "README.md"
 license = { file = "LICENSE" }
 requires-python = ">=3.10"
@@ -46,25 +46,25 @@ source = "nodejs"
 fields = ["description", "authors", "urls", "keywords"]
 
 [tool.hatch.build.targets.sdist]
-artifacts = ["nbgitpuller_jb_interface/labextension"]
+artifacts = ["nbgitpuller_jl_interface/labextension"]
 exclude = [".github", "binder"]
 
 [tool.hatch.build.targets.wheel.shared-data]
-"nbgitpuller_jb_interface/labextension" = "share/jupyter/labextensions/nbgitpuller-jb-interface"
-"install.json" = "share/jupyter/labextensions/nbgitpuller-jb-interface/install.json"
+"nbgitpuller_jl_interface/labextension" = "share/jupyter/labextensions/nbgitpuller-jl-interface"
+"install.json" = "share/jupyter/labextensions/nbgitpuller-jl-interface/install.json"
 "jupyter-config/server-config" = "etc/jupyter/jupyter_server_config.d"
 
 [tool.hatch.build.hooks.version]
-path = "nbgitpuller_jb_interface/_version.py"
+path = "nbgitpuller_jl_interface/_version.py"
 
 [tool.hatch.build.hooks.jupyter-builder]
 dependencies = ["hatch-jupyter-builder>=0.5"]
 build-function = "hatch_jupyter_builder.npm_builder"
 ensured-targets = [
-    "nbgitpuller_jb_interface/labextension/static/style.js",
-    "nbgitpuller_jb_interface/labextension/package.json",
+    "nbgitpuller_jl_interface/labextension/static/style.js",
+    "nbgitpuller_jl_interface/labextension/package.json",
 ]
-skip-if-exists = ["nbgitpuller_jb_interface/labextension/static/style.js"]
+skip-if-exists = ["nbgitpuller_jl_interface/labextension/static/style.js"]
 
 [tool.hatch.build.hooks.jupyter-builder.build-kwargs]
 build_cmd = "build:prod"
@@ -74,7 +74,7 @@ npm = ["jlpm"]
 build_cmd = "install:extension"
 npm = ["jlpm"]
 source_dir = "src"
-build_dir = "nbgitpuller_jb_interface/labextension"
+build_dir = "nbgitpuller_jl_interface/labextension"
 
 [tool.jupyter-releaser.options]
 version_cmd = "hatch version"

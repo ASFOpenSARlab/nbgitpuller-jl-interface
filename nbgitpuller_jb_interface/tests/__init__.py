@@ -1,1 +1,1 @@
-"""Python unit tests for nbgitpuller_jb_interface."""
+"""Python unit tests for nbgitpuller_jl_interface."""
