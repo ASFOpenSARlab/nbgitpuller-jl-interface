@@ -9,7 +9,7 @@ jobs:
     permissions:
       contents: write
       pull-requests: write
-      # issues: write
+      issues: write
       # packages: write
     steps:
       - name: enforce-triage-label
