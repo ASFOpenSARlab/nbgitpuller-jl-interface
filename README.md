@@ -3,7 +3,6 @@
 [![Github Actions Status](https://github.com/ASFOpenSARlab/nbgitpuller-jl-interface/workflows/Build/badge.svg)](https://github.com/ASFOpenSARlab/nbgitpuller-jl-interface/actions/workflows/build.yml)
 [![Binder](https://mybinder.org/badge_logo.svg)](https://mybinder.org/v2/gh/ASFOpenSARlab/nbgitpuller-jl-interface/main?urlpath=lab)
 
-
 A human interface with nbgitpuller in JupyterBook
 
 This extension is composed of a Python package named `nbgitpuller_jl_interface`

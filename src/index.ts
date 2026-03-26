@@ -4,7 +4,7 @@ import {
   JupyterFrontEndPlugin
 } from '@jupyterlab/application';
 
-import { makeNbgitpullerRequest } from './utils'
+import { makeNbgitpullerRequest } from './utils';
 
 import { Widget } from '@lumino/widgets';
 
@@ -34,17 +34,27 @@ const plugin: JupyterFrontEndPlugin<void> = {
   autoStart: true,
   optional: [ISettingRegistry],
   requires: [ILabShell],
-  activate: (app: JupyterFrontEnd, shell: ILabShell, settingRegistry: ISettingRegistry | null) => {
+  activate: (
+    app: JupyterFrontEnd,
+    shell: ILabShell,
+    settingRegistry: ISettingRegistry | null
+  ) => {
     console.log('JupyterLab extension nbgitpuller-jl-interface is activated!');
 
     if (settingRegistry) {
       settingRegistry
         .load(plugin.id)
         .then(settings => {
-          console.log('nbgitpuller-jl-interface settings loaded:', settings.composite);
+          console.log(
+            'nbgitpuller-jl-interface settings loaded:',
+            settings.composite
+          );
         })
         .catch(reason => {
-          console.error('Failed to load settings for nbgitpuller-jl-interface.', reason);
+          console.error(
+            'Failed to load settings for nbgitpuller-jl-interface.',
+            reason
+          );
         });
     }
 
@@ -65,15 +75,15 @@ const plugin: JupyterFrontEndPlugin<void> = {
     widget.title.caption = 'NBGitpuller';
 
     const gitpullerBtn = document.createElement('button');
-    gitpullerBtn.innerHTML = "Update";
+    gitpullerBtn.innerHTML = 'Update';
     gitpullerBtn.onclick = async () => {
       const resp = await makeNbgitpullerRequest(
-        "https://github.com/ASFOpenSARlab/opensarlab-notebooks.git",
-        "notebooks",
-        "master",
+        'https://github.com/ASFOpenSARlab/opensarlab-notebooks.git',
+        'notebooks',
+        'master'
       );
       console.log(`response data: ${JSON.stringify(resp)}`);
-    }
+    };
     widget.node.appendChild(gitpullerBtn);
 
     shell.add(widget, 'left', { rank: 400 });
