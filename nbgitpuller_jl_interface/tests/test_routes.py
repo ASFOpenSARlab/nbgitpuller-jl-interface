@@ -15,3 +15,12 @@ async def test_hello(jp_fetch):
                 " Try visiting me in your browser!"
             ),
         }
+
+async def test_gitpuller(jp_fetch):
+    response = await jp_fetch("nbgitpuller-jl-interface", "gitpuller")
+    
+    assert response.code == 200
+    payload = json.loads(response.body)
+    print(payload)
+    assert False
+    # assert payload ==

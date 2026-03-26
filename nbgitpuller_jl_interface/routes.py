@@ -16,7 +16,7 @@ class HelloRouteHandler(APIHandler):
             "data": (
                 "Hello, world!"
                 " This is the '/nbgitpuller-jl-interface/hello' endpoint."
-                " Try visiting me in your browser! Try it1"
+                " Try visiting me in your browser!"
             ),
         }))
 
