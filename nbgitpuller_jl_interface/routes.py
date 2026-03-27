@@ -61,11 +61,11 @@ class GitpullerRouteHandler(APIHandler):
         )
         
         self.finish(json.dumps({
-            "result": json.dumps({
-            "output": result.stdout,
-            "error": result.stderr,
-            "returncode": result.returncode
-        })
+            "result": {
+                "output": result.stdout,
+                "error": result.stderr,
+                "returncode": result.returncode
+            }
         }))
 
 def setup_route_handlers(web_app):
