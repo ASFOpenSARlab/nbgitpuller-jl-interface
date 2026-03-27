@@ -17,7 +17,15 @@ async def test_hello(jp_fetch):
         }
 
 async def test_gitpuller(jp_fetch):
-    response = await jp_fetch("nbgitpuller-jl-interface", "gitpuller")
+    response = await jp_fetch(
+        "nbgitpuller-jl-interface", "gitpuller",
+        method="POST",
+        body=json.dumps({
+            "githubUrl": "https://github.com/ASFOpenSARlab/opensarlab-notebooks.git",
+            "githubBranch": "master",
+            "destination": "notebook",
+        })
+    )
     
     assert response.code == 200
     payload = json.loads(response.body)
