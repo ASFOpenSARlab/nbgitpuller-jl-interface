@@ -86,7 +86,7 @@ const plugin: JupyterFrontEndPlugin<void> = {
     };
     widget.node.appendChild(gitpullerBtn);
 
-    shell.add(widget, 'left', { rank: 400 });
+    shell.add(widget, 'top', { rank: 400 });
     widget.activate();
   }
 };
