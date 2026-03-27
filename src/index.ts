@@ -4,6 +4,8 @@ import {
   JupyterFrontEndPlugin
 } from '@jupyterlab/application';
 
+import { makeNbgitpullerRequest } from './utils';
+
 import { Widget } from '@lumino/widgets';
 
 import { ISettingRegistry } from '@jupyterlab/settingregistry';
@@ -32,17 +34,27 @@ const plugin: JupyterFrontEndPlugin<void> = {
   autoStart: true,
   optional: [ISettingRegistry],
   requires: [ILabShell],
-  activate: (app: JupyterFrontEnd, shell: ILabShell, settingRegistry: ISettingRegistry | null) => {
+  activate: (
+    app: JupyterFrontEnd,
+    shell: ILabShell,
+    settingRegistry: ISettingRegistry | null
+  ) => {
     console.log('JupyterLab extension nbgitpuller-jl-interface is activated!');
 
     if (settingRegistry) {
       settingRegistry
         .load(plugin.id)
         .then(settings => {
-          console.log('nbgitpuller-jl-interface settings loaded:', settings.composite);
+          console.log(
+            'nbgitpuller-jl-interface settings loaded:',
+            settings.composite
+          );
         })
         .catch(reason => {
-          console.error('Failed to load settings for nbgitpuller-jl-interface.', reason);
+          console.error(
+            'Failed to load settings for nbgitpuller-jl-interface.',
+            reason
+          );
         });
     }
 
@@ -55,7 +67,6 @@ const plugin: JupyterFrontEndPlugin<void> = {
     //       `The nbgitpuller_jl_interface server extension appears to be missing.\n${reason}`
     //     );
     //   });
-    console.log("Grooble")
 
     const widget = new Widget();
     widget.id = '@jupyterlab-sidepanel/nbgitpuller-jl-interface';
@@ -63,9 +74,17 @@ const plugin: JupyterFrontEndPlugin<void> = {
     widget.title.className = 'jbook-tab';
     widget.title.caption = 'NBGitpuller';
 
-    const summary = document.createElement('p');
-      summary.innerHTML = "This is a thing.";
-    widget.node.appendChild(summary);
+    const gitpullerBtn = document.createElement('button');
+    gitpullerBtn.innerHTML = 'Update';
+    gitpullerBtn.onclick = async () => {
+      const resp = await makeNbgitpullerRequest(
+        'https://github.com/ASFOpenSARlab/opensarlab-notebooks.git',
+        'notebooks',
+        'master'
+      );
+      console.log(`response data: ${JSON.stringify(resp)}`);
+    };
+    widget.node.appendChild(gitpullerBtn);
 
     shell.add(widget, 'left', { rank: 400 });
     widget.activate();
