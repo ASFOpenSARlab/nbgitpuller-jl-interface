@@ -30,9 +30,9 @@ async def test_gitpuller(jp_fetch):
     assert response.code == 200
     payload = json.loads(response.body)
     assert payload.get('result')
-    assert payload["result"].get("output")
+    assert "output" in payload["result"]
     assert payload["result"]["output"] == "$ git clone --depth 1 --branch master -- https://github.com/ASFOpenSARlab/opensarlab-notebooks.git notebook\n\nCloning into 'notebook'...\n\n"
-    assert payload["result"].get("error")
+    assert "error" in payload["result"]
     assert "INFO -- Repo notebook doesn't exist. Cloning..." in payload["result"]["error"]
-    assert payload["result"].get("returncode")
+    assert "returncode" in payload["result"]
     assert payload["result"]["returncode"] == 0
