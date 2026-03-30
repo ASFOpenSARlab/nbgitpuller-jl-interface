@@ -3,3 +3,18 @@
 
     https://jupyterlab.readthedocs.io/en/stable/developer/css.html
 */
+
+jp-button.nbgitpuller-jl-interface-update-btn {
+  border: 1px solid #bdbdbd;
+  border-radius: 15px;
+  padding-right: 5px;
+  padding-left: 5px;
+}
+
+.nbgitpuller-jl-interface-wrapper {
+  padding-left: 10px !important;
+  padding-right: 10px !important;
+  flex-direction: column;
+  display: flex;
+  justify-content: center;
+}

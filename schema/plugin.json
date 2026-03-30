@@ -3,6 +3,28 @@
   "title": "nbgitpuller-jl-interface",
   "description": "nbgitpuller-jl-interface settings.",
   "type": "object",
-  "properties": {},
+  "properties": {
+    "repos": {
+      "type": "array",
+      "title": "Repositories",
+      "items": {
+        "type": "object",
+        "properties": {
+          "repoUrl": {"type": "string"},
+          "branch": {"type": "string"},
+          "destPath": {"type": "string"},
+          "_commitHash": {"type": "string"}
+        }
+      },
+      "description": "List of repositories monitored by NBGitpuller",
+      "default": []
+    },
+    "rank": {
+      "type": "number",
+      "title": "Relative Rank",
+      "description": "Relative rank of feature. The bigger the number, the further to the right.",
+      "default": 1000
+    }
+  },
   "additionalProperties": false
 }

@@ -1,9 +1,1 @@
 @import url('base.css');
-
-.jbook-icon2 {
-  background-image: url('tmp_logo.svg');
-}
-
-.jbook-icon2 svg path {
-  display: none;
-}

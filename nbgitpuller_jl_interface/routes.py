@@ -2,6 +2,8 @@ import json
 import subprocess
 from shutil import which
 
+from nbgitpuller_jl_interface.utils import pullRepo
+
 from jupyter_server.base.handlers import APIHandler
 from jupyter_server.utils import url_path_join
 import tornado
@@ -48,25 +50,11 @@ class GitpullerRouteHandler(APIHandler):
         github_url = body["githubUrl"]
         github_branch = body["githubBranch"]
         destination = body["destination"]
-        command = which("gitpuller")
         
-        if command is None:
-            self.finish(json.dumps({"error": "gitpuller not found"}))
-            return
-        
-        result = subprocess.run(
-            [command, github_url, github_branch, destination],
-            capture_output=True,
-            text=True
-        )
-        
-        self.finish(json.dumps({
-            "result": {
-                "output": result.stdout,
-                "error": result.stderr,
-                "returncode": result.returncode
-            }
-        }))
+        # Pull repo
+        result = pullRepo(github_url, github_branch, destination)
+
+        self.finish(json.dumps(result))
 
 def setup_route_handlers(web_app):
     host_pattern = ".*$"
