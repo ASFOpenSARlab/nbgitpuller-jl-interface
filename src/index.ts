@@ -4,7 +4,7 @@ import {
   JupyterFrontEndPlugin
 } from '@jupyterlab/application';
 
-import { nbgitpullerUpdateButton, checkForRepoUpdates } from './utils';
+import { nbgitpullerUpdateButton, getMostRecentRepoHash, repoUpdateProbe } from './utils';
 
 // import { Widget } from '@lumino/widgets';
 
@@ -54,7 +54,7 @@ const plugin: JupyterFrontEndPlugin<void> = {
         className: "nbgitpuller-jl-interface-update-btn",
         label: 'RunFunction',
         onClick: async () => {
-          const response = await checkForRepoUpdates("opensarlab-notebooks", "ASFOpenSARlab", "master", "invalidsha");
+          const response = await getMostRecentRepoHash("opensarlab-notebooks", "ASFOpenSARlab", "master");
           console.log(`Response from function: ${response}`)
         },
         tooltip: 'Pull the latest changes from your repos'
@@ -71,6 +71,7 @@ const plugin: JupyterFrontEndPlugin<void> = {
           allSettings: ISettingRegistry.ISettings
         ): Promise<void> {
           await nbgitpullerUpdateButton(app, allSettings);
+          await repoUpdateProbe(allSettings);
         }
 
         // Read the settings

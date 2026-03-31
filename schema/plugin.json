@@ -24,6 +24,12 @@
       "title": "Relative Rank",
       "description": "Relative rank of feature. The bigger the number, the further to the right.",
       "default": 1000
+    },
+    "probeInterval": {
+      "type": "number",
+      "title": "Probe Interval",
+      "description": "The interval in ms between probes for repository updates.",
+      "default": 5000
     }
   },
   "additionalProperties": false
