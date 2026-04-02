@@ -4,11 +4,7 @@ import {
   JupyterFrontEndPlugin
 } from '@jupyterlab/application';
 
-import { nbgitpullerUpdateButton, checkForRepoUpdates, repoUpdateProbe, Repository } from './utils';
-
-// import { Widget } from '@lumino/widgets';
-
-import { ToolbarButton } from '@jupyterlab/apputils';
+import { nbgitpullerUpdateButton, repoUpdateProbe } from './utils';
 
 import { ISettingRegistry } from '@jupyterlab/settingregistry';
 
