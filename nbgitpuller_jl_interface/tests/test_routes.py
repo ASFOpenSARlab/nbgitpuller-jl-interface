@@ -21,8 +21,8 @@ async def test_gitpuller(jp_fetch):
         "nbgitpuller-jl-interface", "gitpuller",
         method="POST",
         body=json.dumps({
-            "githubUrl": "https://github.com/ASFOpenSARlab/opensarlab-notebooks.git",
-            "githubBranch": "master",
+            "repositoryUrl": "https://github.com/ASFOpenSARlab/opensarlab-notebooks.git",
+            "repositoryBranch": "master",
             "destination": "notebook",
         })
     )

@@ -34,3 +34,13 @@ jp-button.nbgitpuller-jl-interface-update-btn {
 .failure {
   color: #d63124;
 }
+
+.blink {
+  animation: blinker-me-blinker 2s linear infinite;
+}
+
+@keyframes blinker-me-blinker {
+  50% {
+    opacity: 0;
+  }
+}

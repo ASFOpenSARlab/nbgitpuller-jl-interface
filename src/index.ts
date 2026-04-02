@@ -4,7 +4,7 @@ import {
   JupyterFrontEndPlugin
 } from '@jupyterlab/application';
 
-import { nbgitpullerUpdateButton, getMostRecentRepoHash, repoUpdateProbe } from './utils';
+import { nbgitpullerUpdateButton, checkForRepoUpdates, repoUpdateProbe, Repository } from './utils';
 
 // import { Widget } from '@lumino/widgets';
 
@@ -50,18 +50,21 @@ const plugin: JupyterFrontEndPlugin<void> = {
       );
       return;
     }
-    const updateReposBtn = new ToolbarButton({
+    
+    async function tempFunc(repos: Repository[]){
+      const updateReposBtn = new ToolbarButton({
         className: "nbgitpuller-jl-interface-update-btn",
         label: 'RunFunction',
         onClick: async () => {
-          const response = await getMostRecentRepoHash("opensarlab-notebooks", "ASFOpenSARlab", "master");
-          console.log(`Response from function: ${response}`)
+          const response = await checkForRepoUpdates(repos);
+          console.log(`Response from function: ${JSON.stringify(response)}`);
         },
         tooltip: 'Pull the latest changes from your repos'
       });
       updateReposBtn.id = "temp-function-btn";
       updateReposBtn.addClass('nbgitpuller-jl-interface-wrapper');
       app.shell.add(updateReposBtn, 'top', { rank: 999});
+    }
     
 
     // Initialize buttons
@@ -72,6 +75,8 @@ const plugin: JupyterFrontEndPlugin<void> = {
         ): Promise<void> {
           await nbgitpullerUpdateButton(app, allSettings);
           await repoUpdateProbe(allSettings);
+          const repositories = allSettings.get('repos').composite as any as Repository[];
+          await tempFunc(repositories);
         }
 
         // Read the settings

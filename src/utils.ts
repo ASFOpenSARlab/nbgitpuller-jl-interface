@@ -9,7 +9,7 @@ import { ISettingRegistry } from '@jupyterlab/settingregistry';
 const widget_id = 'nbgitpuller-jl-interface-update-btn';
 var intervalID = 0;
 
-interface Repository{
+export interface Repository{
   repoUrl:string,
   branch:string,
   destPath: string,
@@ -45,7 +45,15 @@ export async function nbgitpullerUpdateButton(
   app.shell.add(updateReposBtn, 'top', { rank: rank});
 
   // Check for updates
-  await checkForRepoUpdates(repositories)
+  const repoUpdates = await checkForRepoUpdates(repositories);
+  if(repoUpdates["statuscode"] == 0){
+    const updateCheckResponse = repoUpdates["response"] as {numToBeUpdated:number, numWithErrors:number};
+    const tooltip = `${updateCheckResponse["numToBeUpdated"]} awaiting updates\n${updateCheckResponse["numWithErrors"]} repos with errors`;
+    const updateDisplayResponse = await setUpdateButtonDisplay(updateCheckResponse["numToBeUpdated"]+updateCheckResponse["numWithErrors"] == 0, tooltip, repositories);
+    if(updateDisplayResponse.returncode != 0){
+      console.error(updateDisplayResponse);
+    }
+  }
 
   console.log('nbgitpuller-jl-interface settings loaded');
 }
@@ -61,8 +69,8 @@ export async function makeNbgitpullerRequest(
   // Update repositories
   var failed_updates: string[] = [];
   for (var repo of repositories){
-    const githubUrl = repo["repoUrl"]
-    const githubBranch = repo["branch"]
+    const repositoryUrl = repo["repoUrl"]
+    const repositoryBranch = repo["branch"]
     const destination = repo["destPath"]
 
     const response = await fetch(url, {
@@ -72,14 +80,14 @@ export async function makeNbgitpullerRequest(
         'X-XSRFToken': xsrfToken ?? ''
       },
       body: JSON.stringify({
-        githubUrl: githubUrl,
-        githubBranch: githubBranch,
+        repositoryUrl: repositoryUrl,
+        repositoryBranch: repositoryBranch,
         destination: destination
       })
     });
     const data = await response.json() as { result: {output: string, error: string, returncode: number} };
     if (data["result"]["returncode"] != 0){
-      failed_updates.push(githubUrl);
+      failed_updates.push(repositoryUrl);
     }
   }
   return failed_updates;
@@ -88,51 +96,76 @@ export async function makeNbgitpullerRequest(
 export async function repoUpdateProbe(allSettings: ISettingRegistry.ISettings): Promise<void>{
   const repositories = allSettings.get('repos').composite as any as Repository[];
   const probeInterval = allSettings.get('probeInterval').composite as number;
-  console.log(repositories)
 
   // Stop previous interval (if settings were changed)
   clearInterval(intervalID);
 
   // Create interval
-  intervalID = setInterval(async () =>{await checkForRepoUpdates(repositories)}, probeInterval);
+  intervalID = setInterval(async () => {
+    const repoUpdates = await checkForRepoUpdates(repositories);
+    if(repoUpdates["statuscode"] == 0){
+      const updateCheckResponse = repoUpdates["response"] as {numToBeUpdated:number, numWithErrors:number};
+      const tooltip = `${updateCheckResponse["numToBeUpdated"]} awaiting updates\n${updateCheckResponse["numWithErrors"]} repos with errors`;
+      const updateDisplayResponse = await setUpdateButtonDisplay(updateCheckResponse["numToBeUpdated"]+updateCheckResponse["numWithErrors"] == 0, tooltip, repositories);
+      if(updateDisplayResponse.returncode != 0){
+        console.error(updateDisplayResponse);
+      }
+    }
+  }, probeInterval);
 }
 
-export async function checkForRepoUpdates(repositories: Repository[]){
-    var numToBeUpdated = 0;
-    var numWithErrors = 0;
-    // Check every repository
-    for (var repo of repositories){
-      // Get relevant repository information
-      const githubUrl = repo["repoUrl"]
-      const githubBranch = repo["branch"]
-      const _commitHash = repo["_commitHash"]
-      // Get repo owner and name
-      const splitUrl = githubUrl.split("/")
-      if (splitUrl.length < 5){
-        console.error(`Invalid repository url: ${githubUrl}`)
-        numWithErrors += 1;
-        continue
-      }
-      const repositoryOwner = splitUrl[3]
-      const repositoryName = splitUrl[4].split(".")[0]
+export async function checkForRepoUpdates(repositories: Repository[]): Promise<{response: {}, statuscode: number}>{
+  var numToBeUpdated = 0;
+  var numWithErrors = 0;
+  // Check every repository
+  for (var repo of repositories){
+    // Get relevant repository information
+    const repositoryUrl = repo["repoUrl"]
+    const repositoryBranch = repo["branch"]
+    const destination = repo["destPath"]
 
-      // Compare hashes
-      const newCommitHash = await getMostRecentRepoHash(repositoryName, repositoryOwner, githubBranch)
-      if(newCommitHash == "error"){
-        console.error(`Unable to get commit hash for repo: ${githubUrl} branch: ${githubBranch}`)
-        numWithErrors += 1;
-        continue
-      }
-      if(newCommitHash != _commitHash){
-        numToBeUpdated += 1;
-        continue
-      }
+    // Poll repo for any new commits
+    const url = window.location.origin + '/nbgitpuller-jl-interface/update-check';
+    const xsrfToken = document.cookie
+      .split(';')
+      .find(row => row.startsWith('_xsrf='))
+      ?.split('=')[1];
+    const needUpdate = await fetch(url, {
+    method: 'POST',
+    headers: {
+      'Content-Type': 'application/json',
+      'X-XSRFToken': xsrfToken ?? ''
+    },
+    body: JSON.stringify({
+        repositoryUrl: repositoryUrl,
+        repositoryBranch: repositoryBranch,
+        destination: destination
+      })
+    });
+    const data = await needUpdate.json();
+    console.log(JSON.stringify(data));
+    if(data["returncode"] !== 0){
+      numWithErrors += 1;
     }
-    const tooltip = `${numToBeUpdated} awaiting updates\n${numWithErrors} repos with errors`;
-    const response = await setUpdateButtonDisplay(numToBeUpdated+numWithErrors == 0, tooltip, repositories)
-    if(response.returncode != 0){
-      console.error(response)
+    else if(data["updatefound"]){
+      console.log(data["updatefound"]);
+      numToBeUpdated += 1;
     }
+  }
+
+  // const tooltip = `${numToBeUpdated} awaiting updates\n${numWithErrors} repos with errors`;
+  // const response = await setUpdateButtonDisplay(numToBeUpdated+numWithErrors == 0, tooltip, repositories)
+  // if(response.returncode != 0){
+  //   console.error(response)
+  // }
+  console.log(`Update: ${numToBeUpdated} Errors: ${numWithErrors}`)
+  return {
+    "response": {
+      "numToBeUpdated": numToBeUpdated,
+      "numWithErrors": numWithErrors,
+    },
+    "statuscode": 0
+  }
 }
 
 export async function getMostRecentRepoHash(
@@ -140,9 +173,9 @@ export async function getMostRecentRepoHash(
   repositoryOwner: string,
   branch: string,
 ): Promise<string>{
-  const url = `https://api.github.com/repos/${repositoryOwner}/${repositoryName}/git/ref/heads/${branch}`;
+  const url = `https://api.repository.com/repos/${repositoryOwner}/${repositoryName}/git/ref/heads/${branch}`;
   const headers = {
-    "Accept": "application/vnd.github+json"
+    "Accept": "application/vnd.repository+json"
   }
 
   const response = await fetch(url, {headers});
@@ -169,7 +202,7 @@ export async function setUpdateButtonDisplay(upToDate:boolean, tooltip: string, 
   if(upToDate){
     buttonHTML = `<span class="success">◉</span> Up to Date`;
   }else{
-    buttonHTML = `<span class="failure">◉</span> Update Repos`;
+    buttonHTML = `<span class="failure blink">◉</span> Update Repos`;
   }
   
   widget.innerHTML = `
