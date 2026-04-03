@@ -53,8 +53,12 @@ const plugin: JupyterFrontEndPlugin<void> = {
         async function loadSettings(
           allSettings: ISettingRegistry.ISettings
         ): Promise<void> {
-          await nbgitpullerUpdateButton(app, allSettings);
-          await repoUpdateProbe(allSettings);
+          const reloadWidget = allSettings.get('reloadWidget').composite as boolean;
+          if(reloadWidget){
+            await nbgitpullerUpdateButton(app, allSettings);
+            await repoUpdateProbe(allSettings);
+            await allSettings.set('reloadWidget', false);
+          }
         }
 
         // Read the settings

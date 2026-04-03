@@ -4,6 +4,12 @@
   "description": "nbgitpuller-jl-interface settings.",
   "type": "object",
   "properties": {
+    "reloadWidget": {
+      "type": "boolean",
+      "title": "Reload Widget",
+      "description": "Reloads widget, useful if you want to change your settings",
+      "default": true
+    },
     "repos": {
       "type": "array",
       "title": "Repositories",
