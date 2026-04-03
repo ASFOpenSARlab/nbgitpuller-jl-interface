@@ -153,7 +153,18 @@ export async function checkForUpdatesAndSetDisplay(repositories: Repository[]){
   // Update display
   if(repoUpdates["statuscode"] == 0){
     const updateCheckResponse = repoUpdates["response"] as {numToBeUpdated:number, numWithErrors:number};
-    const tooltip = `${updateCheckResponse["numToBeUpdated"]} awaiting updates\n${updateCheckResponse["numWithErrors"]} repos with errors`;
+    // Generate tooltip
+    let tooltip = ""
+    if(updateCheckResponse["numToBeUpdated"]+updateCheckResponse["numWithErrors"]){
+      if(updateCheckResponse["numToBeUpdated"]){
+        tooltip += `${updateCheckResponse["numToBeUpdated"]} awaiting updates\n`;
+      }
+      if(updateCheckResponse["numWithErrors"]){
+        tooltip += `${updateCheckResponse["numWithErrors"]} repos with errors`;
+      }
+    }else{
+      tooltip = `${repositories.length} Repos up to date`
+    }
     const updateDisplayResponse = await setUpdateButtonDisplay(updateCheckResponse["numToBeUpdated"]+updateCheckResponse["numWithErrors"] == 0, tooltip, repositories);
     if(updateDisplayResponse.returncode != 0){
       console.error(updateDisplayResponse);
