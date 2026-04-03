@@ -45,15 +45,7 @@ export async function nbgitpullerUpdateButton(
   app.shell.add(updateReposBtn, 'top', { rank: rank});
 
   // Check for updates
-  const repoUpdates = await checkForRepoUpdates(repositories);
-  if(repoUpdates["statuscode"] == 0){
-    const updateCheckResponse = repoUpdates["response"] as {numToBeUpdated:number, numWithErrors:number};
-    const tooltip = `${updateCheckResponse["numToBeUpdated"]} awaiting updates\n${updateCheckResponse["numWithErrors"]} repos with errors`;
-    const updateDisplayResponse = await setUpdateButtonDisplay(updateCheckResponse["numToBeUpdated"]+updateCheckResponse["numWithErrors"] == 0, tooltip, repositories);
-    if(updateDisplayResponse.returncode != 0){
-      console.error(updateDisplayResponse);
-    }
-  }
+  checkForUpdatesAndSetDisplay(repositories)
 
   console.log('nbgitpuller-jl-interface settings loaded');
 }
@@ -85,8 +77,8 @@ export async function makeNbgitpullerRequest(
         destination: destination
       })
     });
-    const data = await response.json() as { result: {output: string, error: string, returncode: number} };
-    if (data["result"]["returncode"] != 0){
+    const data = await response.json() as { output: string, error: string, returncode: number };
+    if (data["returncode"] != 0){
       failed_updates.push(repositoryUrl);
     }
   }
@@ -102,15 +94,7 @@ export async function repoUpdateProbe(allSettings: ISettingRegistry.ISettings): 
 
   // Create interval
   intervalID = setInterval(async () => {
-    const repoUpdates = await checkForRepoUpdates(repositories);
-    if(repoUpdates["statuscode"] == 0){
-      const updateCheckResponse = repoUpdates["response"] as {numToBeUpdated:number, numWithErrors:number};
-      const tooltip = `${updateCheckResponse["numToBeUpdated"]} awaiting updates\n${updateCheckResponse["numWithErrors"]} repos with errors`;
-      const updateDisplayResponse = await setUpdateButtonDisplay(updateCheckResponse["numToBeUpdated"]+updateCheckResponse["numWithErrors"] == 0, tooltip, repositories);
-      if(updateDisplayResponse.returncode != 0){
-        console.error(updateDisplayResponse);
-      }
-    }
+    checkForUpdatesAndSetDisplay(repositories)
   }, probeInterval);
 }
 
@@ -153,12 +137,6 @@ export async function checkForRepoUpdates(repositories: Repository[]): Promise<{
     }
   }
 
-  // const tooltip = `${numToBeUpdated} awaiting updates\n${numWithErrors} repos with errors`;
-  // const response = await setUpdateButtonDisplay(numToBeUpdated+numWithErrors == 0, tooltip, repositories)
-  // if(response.returncode != 0){
-  //   console.error(response)
-  // }
-  console.log(`Update: ${numToBeUpdated} Errors: ${numWithErrors}`)
   return {
     "response": {
       "numToBeUpdated": numToBeUpdated,
@@ -168,25 +146,17 @@ export async function checkForRepoUpdates(repositories: Repository[]): Promise<{
   }
 }
 
-export async function getMostRecentRepoHash(
-  repositoryName: string,
-  repositoryOwner: string,
-  branch: string,
-): Promise<string>{
-  const url = `https://api.repository.com/repos/${repositoryOwner}/${repositoryName}/git/ref/heads/${branch}`;
-  const headers = {
-    "Accept": "application/vnd.repository+json"
-  }
-
-  const response = await fetch(url, {headers});
-  const data = await response.json()
-
-  if(data?.object?.sha !== undefined){
-    console.log(`All good ${repositoryName}`)
-    return data.object.sha
-  }else{
-    console.log("ERROR GETTING SHA")
-    return "error";
+export async function checkForUpdatesAndSetDisplay(repositories: Repository[]){
+  // Check for updates
+  const repoUpdates = await checkForRepoUpdates(repositories);
+  // Update display
+  if(repoUpdates["statuscode"] == 0){
+    const updateCheckResponse = repoUpdates["response"] as {numToBeUpdated:number, numWithErrors:number};
+    const tooltip = `${updateCheckResponse["numToBeUpdated"]} awaiting updates\n${updateCheckResponse["numWithErrors"]} repos with errors`;
+    const updateDisplayResponse = await setUpdateButtonDisplay(updateCheckResponse["numToBeUpdated"]+updateCheckResponse["numWithErrors"] == 0, tooltip, repositories);
+    if(updateDisplayResponse.returncode != 0){
+      console.error(updateDisplayResponse);
+    }
   }
 }
 
@@ -200,9 +170,9 @@ export async function setUpdateButtonDisplay(upToDate:boolean, tooltip: string, 
   var buttonHTML
   // Update Contents
   if(upToDate){
-    buttonHTML = `<span class="success">◉</span> Up to Date`;
+    buttonHTML = `<p><span class="success">◉</span> Up to Date</p>`;
   }else{
-    buttonHTML = `<span class="failure blink">◉</span> Update Repos`;
+    buttonHTML = `<p><span class="failure blink">◉</span> Update Repos</p>`;
   }
   
   widget.innerHTML = `
@@ -210,12 +180,14 @@ export async function setUpdateButtonDisplay(upToDate:boolean, tooltip: string, 
          title="${tooltip}">
       <jp-button class="nbgitpuller-jl-interface-update-btn jp-ToolbarButtonComponent">
         ${buttonHTML}
-      </jp-button
+      </jp-button>
     </div>`;
   widget.addEventListener("click", async () => {
-    console.log("CLICKED BUTTON");
     const failed_updates = await makeNbgitpullerRequest(repositories);
-    console.log(`Failed to update the following repos: ${failed_updates}`);
+    if(failed_updates){
+      console.log(`Failed to update the following repos: ${failed_updates}`);
+    }
+    checkForUpdatesAndSetDisplay(repositories);
   });
 
   return {"error":"", "returncode": 0}
