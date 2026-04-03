@@ -7,13 +7,12 @@ import { find } from '@lumino/algorithm';
 import { ISettingRegistry } from '@jupyterlab/settingregistry';
 
 const widget_id = 'nbgitpuller-jl-interface-update-btn';
-var intervalID = 0;
+let intervalID: ReturnType<typeof setInterval>;
 
 export interface Repository{
   repoUrl:string,
   branch:string,
   destPath: string,
-  _commitHash: string 
 }
 
 export async function nbgitpullerUpdateButton(
@@ -127,12 +126,14 @@ export async function checkForRepoUpdates(repositories: Repository[]): Promise<{
       })
     });
     const data = await needUpdate.json();
+
     console.log(JSON.stringify(data));
+
     if(data["returncode"] !== 0){
       numWithErrors += 1;
     }
     else if(data["updatefound"]){
-      console.log(data["updatefound"]);
+      // console.log(data["updatefound"]);
       numToBeUpdated += 1;
     }
   }
@@ -167,19 +168,20 @@ export async function setUpdateButtonDisplay(upToDate:boolean, tooltip: string, 
     return {"error": "Unable to find nbgitpuller widget", "returncode": 1}
   }
 
-  var buttonHTML
-  // Update Contents
+  // Create button label html
+  var labelHTML
   if(upToDate){
-    buttonHTML = `<p><span class="success">◉</span> Up to Date</p>`;
+    labelHTML = `<p><span class="success">◉</span> Up to Date</p>`;
   }else{
-    buttonHTML = `<p><span class="failure blink">◉</span> Update Repos</p>`;
+    labelHTML = `<p><span class="failure blink">◉</span> Update Repos</p>`;
   }
   
+  // Update widget functionality
   widget.innerHTML = `
     <div class="lm-Widget jp-ToolbarButton nbgitpuller-jl-interface-wrapper"
          title="${tooltip}">
       <jp-button class="nbgitpuller-jl-interface-update-btn jp-ToolbarButtonComponent">
-        ${buttonHTML}
+        ${labelHTML}
       </jp-button>
     </div>`;
   widget.addEventListener("click", async () => {
