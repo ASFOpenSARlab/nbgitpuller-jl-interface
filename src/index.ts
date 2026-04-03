@@ -49,7 +49,11 @@ const plugin: JupyterFrontEndPlugin<void> = {
     
     // Initialize buttons
     Promise.all([app.restored, settingRegistry.load(plugin.id)])
-      .then(([, settings]) => {
+      .then(async ([, settings]) => {
+
+        // reloadWidget on extension loading
+        await settings.set('reloadWidget', true);
+
         async function loadSettings(
           allSettings: ISettingRegistry.ISettings
         ): Promise<void> {
