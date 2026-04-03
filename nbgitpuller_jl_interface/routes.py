@@ -34,8 +34,15 @@ class GitpullerRouteHandler(APIHandler):
         repository_branch = body["repositoryBranch"]
         destination = body["destination"]
         
+        result = {
+            "output": "",
+            "error": "",
+            "returncode": 42
+        }
+        
         # Pull repo
-        result = pullRepo(repository_url, repository_branch, destination)
+        ret = pullRepo(repository_url, repository_branch, destination)
+        result.update(ret)
 
         self.finish(json.dumps(result))
 
@@ -48,15 +55,24 @@ class GitDetectUpdateHandler(APIHandler):
         repository_branch = body["repositoryBranch"]
         destination = body["destination"]
         
-        result = checkIfRepoExists(repository_url)
+        # Default values for result, all should be updated before return
+        result = {
+            "repoexists": False,
+            "updatefound": False,
+            "error": "",
+            "returncode": 42,
+        }
+        
+        ret = checkIfRepoExists(repository_url)
+        result.update(ret)
+        # Exit early if error found
         if result["returncode"] != 0:
-            result["updatefound"] = False
             self.finish(json.dumps(result))
             return
         
         # Check if there is an update
-        result = checkForRepoUpdate(destination, repository_branch)
-        result["repoexists"] = True
+        ret = checkForRepoUpdate(destination, repository_branch)
+        result.update(ret)
 
         self.finish(json.dumps(result))
 

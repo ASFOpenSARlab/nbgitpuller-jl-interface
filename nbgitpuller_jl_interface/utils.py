@@ -18,11 +18,9 @@ def pullRepo(repository_url: str, repository_branch: str, destination: str) -> d
         text=True
     )
     return {
-        "result": {
-            "output": result.stdout,
-            "error": result.stderr,
-            "returncode": result.returncode
-        }
+        "output": result.stdout,
+        "error": result.stderr,
+        "returncode": result.returncode
     }
 
 def checkIfRepoExists(repository_url) -> dict[str, Any]:
@@ -37,7 +35,7 @@ def checkIfRepoExists(repository_url) -> dict[str, Any]:
         [command, "ls-remote", repository_url],
         capture_output=True,
         text=True
-    ) 
+    )
     return {
         "repoexists": result.stdout != "",
         "error": result.stderr,
@@ -61,12 +59,22 @@ def checkForRepoUpdate(destination: str, branch: str) -> dict[str, Any]:
         capture_output=True,
         text=True
     )
+    if result.returncode != 0:
+        return {
+            "updatefound": False,
+            "error": result.stderr,
+            "returncode": result.returncode,
+        }
+
     # Check if repo is up to date
     result = subprocess.run(
         [command, "-C", destination, "log", f"HEAD..origin/{branch}", "--oneline"],
         capture_output=True,
         text=True
     )
+    # Command Notes
+    # result.stdout = "" if error
+    # error = "" if no error
     return {
         "updatefound": result.stdout != "",
         "error": result.stderr,
