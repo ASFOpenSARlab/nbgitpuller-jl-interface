@@ -8,6 +8,7 @@ import { ISettingRegistry } from '@jupyterlab/settingregistry';
 
 const widget_id = 'nbgitpuller-jl-interface-update-btn';
 let intervalID: ReturnType<typeof setInterval>;
+let currentlyUpdating: boolean = false;
 
 export interface Repository{
   repoUrl:string,
@@ -31,12 +32,8 @@ export async function nbgitpullerUpdateButton(
   // Create widget
   const updateReposBtn = new ToolbarButton({
     className: "nbgitpuller-jl-interface-update-btn",
-    label: '◉ Update Repos',
-    onClick: async () => {
-      const failed_updates = await makeNbgitpullerRequest(repositories);
-      console.log(`Failed to update the following repos: ${failed_updates}`)
-    },
-    tooltip: 'Pull the latest changes from your repos'
+    label: '◉ Initializing',
+    tooltip: 'Initializing nbgitpuller'
   });
   updateReposBtn.id = widget_id;
   updateReposBtn.addClass('nbgitpuller-jl-interface-wrapper');
@@ -58,7 +55,7 @@ export async function makeNbgitpullerRequest(
     .find(row => row.startsWith('_xsrf='))
     ?.split('=')[1];
   // Update repositories
-  var failed_updates: string[] = [];
+  var failed_updates: { "repo":string, "reason": string }[] = [];
   for (var repo of repositories){
     const repositoryUrl = repo["repoUrl"]
     const repositoryBranch = repo["branch"]
@@ -78,7 +75,7 @@ export async function makeNbgitpullerRequest(
     });
     const data = await response.json() as { output: string, error: string, returncode: number };
     if (data["returncode"] != 0){
-      failed_updates.push(repositoryUrl);
+      failed_updates.push({"repo": repositoryUrl, "reason": data["error"]});
     }
   }
   return failed_updates;
@@ -186,21 +183,49 @@ export async function setUpdateButtonDisplay(upToDate:boolean, tooltip: string, 
   }else{
     labelHTML = `<p><span class="failure blink">◉</span> Update Repos</p>`;
   }
-  
-  // Update widget functionality
-  widget.innerHTML = `
+
+  function generateWidgetHTML(tooltip: string, labelHTML: string): string{
+    return `
     <div class="lm-Widget jp-ToolbarButton nbgitpuller-jl-interface-wrapper"
          title="${tooltip}">
       <jp-button class="nbgitpuller-jl-interface-update-btn jp-ToolbarButtonComponent">
         ${labelHTML}
       </jp-button>
     </div>`;
+  }
+  
+  // Update widget functionality
+  widget.innerHTML = generateWidgetHTML(tooltip, labelHTML)
   widget.addEventListener("click", async () => {
-    const failed_updates = await makeNbgitpullerRequest(repositories);
-    if(failed_updates){
-      console.log(`Failed to update the following repos: ${failed_updates}`);
+    // Throttle updating
+    if (currentlyUpdating){
+      return;
     }
+    // Set updating flag
+    currentlyUpdating = true
+    // Update widget to running animation
+    const pendingTooltip = "Updating Repos...";
+    const pendingLabelHTML = `<p><span class="lds-dual-ring"></span> Updating</p>`;
+    widget.innerHTML = generateWidgetHTML(pendingTooltip, pendingLabelHTML)
+    
+    // Pull each repository
+    const failed_updates = await makeNbgitpullerRequest(repositories);
+
+    // Update widget to all updated or pending updates
     checkForUpdatesAndSetDisplay(repositories);
+
+    // Notify users of any failure
+    if(failed_updates){
+      let failure_message = `Failed to update the following repos: \n`
+      for(var failure of failed_updates){
+        failure_message += `${failure["repo"]}`
+      }
+      console.log(failure_message);
+      alert(failure_message);
+    }
+
+    // Unset updating flag
+    currentlyUpdating = false
   });
 
   return {"error":"", "returncode": 0}
