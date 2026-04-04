@@ -16,9 +16,9 @@
       "items": {
         "type": "object",
         "properties": {
-          "repoUrl": {"type": "string"},
-          "branch": {"type": "string"},
-          "destPath": {"type": "string"}
+          "repoUrl": { "type": "string" },
+          "branch": { "type": "string" },
+          "destPath": { "type": "string" }
         }
       },
       "description": "List of repositories monitored by NBGitpuller",

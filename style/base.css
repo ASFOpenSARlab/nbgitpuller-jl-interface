@@ -3,7 +3,8 @@
 
     https://jupyterlab.readthedocs.io/en/stable/developer/css.html
 */
-/*Manual button css*/
+
+/* Manual button css */
 .nbgitpuller-jl-interface-update-btn {
   border: 1px solid #bdbdbd;
   border-radius: 15px;
@@ -11,7 +12,7 @@
   padding-left: 5px;
 }
 
-/*For jupyter created button css*/
+/* For jupyter created button css */
 jp-button.nbgitpuller-jl-interface-update-btn {
   border: 1px solid #bdbdbd;
   border-radius: 15px;
@@ -47,30 +48,33 @@ jp-button.nbgitpuller-jl-interface-update-btn {
 
 /* https://loading.io/css/ */
 .lds-dual-ring,
-.lds-dual-ring:after {
+.lds-dual-ring::after {
   box-sizing: border-box;
 }
+
 .lds-dual-ring {
   display: inline-block;
   width: 10px;
   height: 10px;
 }
-.lds-dual-ring:after {
-  content: " ";
+
+.lds-dual-ring::after {
+  content: ' ';
   display: block;
   width: 10px;
   height: 10px;
   border-radius: 50%;
-  border: 1.6px solid currentColor;
-  border-color: currentColor transparent currentColor transparent;
+  border: 1.6px solid currentcolor;
+  border-color: currentcolor transparent;
   animation: lds-dual-ring 1.2s linear infinite;
 }
+
 @keyframes lds-dual-ring {
   0% {
     transform: rotate(0deg);
   }
+
   100% {
     transform: rotate(360deg);
   }
 }
-

@@ -36,7 +36,7 @@ const plugin: JupyterFrontEndPlugin<void> = {
     app: JupyterFrontEnd,
     shell: ILabShell,
     palette: ICommandPalette,
-    settingRegistry: ISettingRegistry | null,
+    settingRegistry: ISettingRegistry | null
   ) => {
     // Wait for the application to be restored and
     // for the settings for this plugin to be loaded
@@ -46,19 +46,19 @@ const plugin: JupyterFrontEndPlugin<void> = {
       );
       return;
     }
-    
+
     // Initialize buttons
     Promise.all([app.restored, settingRegistry.load(plugin.id)])
       .then(async ([, settings]) => {
-
         // reloadWidget on extension loading
         await settings.set('reloadWidget', true);
 
         async function loadSettings(
           allSettings: ISettingRegistry.ISettings
         ): Promise<void> {
-          const reloadWidget = allSettings.get('reloadWidget').composite as boolean;
-          if(reloadWidget){
+          const reloadWidget = allSettings.get('reloadWidget')
+            .composite as boolean;
+          if (reloadWidget) {
             await nbgitpullerUpdateButton(app, allSettings);
             await repoUpdateProbe(allSettings);
             await allSettings.set('reloadWidget', false);
@@ -78,23 +78,6 @@ const plugin: JupyterFrontEndPlugin<void> = {
       .catch(reason => {
         console.error(`Something went wrong...${reason}`);
       });
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
 
     // // console.log('JupyterLab extension nbgitpuller-jl-interface is activated!');
     // const { commands } = app;
@@ -127,7 +110,6 @@ const plugin: JupyterFrontEndPlugin<void> = {
     //       );
     //     });
     // }
-
 
     // // Add update-all-repos command
     // const command = 'nbgitpuller:update-all-repos';

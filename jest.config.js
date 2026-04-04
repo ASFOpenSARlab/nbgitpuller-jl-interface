@@ -12,7 +12,7 @@ const esModules = [
   'vscode-ws-jsonrpc',
   'y-protocols',
   'y-websocket',
-  'yjs',
+  'yjs'
 ].join('|');
 
 const baseConfig = jestJupyterLab(__dirname);
