@@ -10,7 +10,7 @@ const widget_id = 'nbgitpuller-jl-interface-update-btn';
 let intervalID: ReturnType<typeof setInterval>;
 let currentlyUpdating: boolean = false;
 
-export interface Repository {
+export interface IRepository {
   repoUrl: string;
   branch: string;
   destPath: string;
@@ -21,7 +21,7 @@ export async function nbgitpullerUpdateButton(
   allSettings: ISettingRegistry.ISettings
 ): Promise<void> {
   const repositories = allSettings.get('repos')
-    .composite as any as Repository[];
+    .composite as any as IRepository[];
   const rank = allSettings.get('rank').composite as number;
 
   // Remove previous button if exists
@@ -47,15 +47,15 @@ export async function nbgitpullerUpdateButton(
   console.log('nbgitpuller-jl-interface settings loaded');
 }
 
-export async function makeNbgitpullerRequest(repositories: Repository[]) {
+export async function makeNbgitpullerRequest(repositories: IRepository[]) {
   const url = window.location.origin + '/nbgitpuller-jl-interface/gitpuller';
   const xsrfToken = document.cookie
     .split(';')
     .find(row => row.startsWith('_xsrf='))
     ?.split('=')[1];
   // Update repositories
-  var failed_updates: { repo: string; reason: string }[] = [];
-  for (var repo of repositories) {
+  const failed_updates: { repo: string; reason: string }[] = [];
+  for (const repo of repositories) {
     const repositoryUrl = repo['repoUrl'];
     const repositoryBranch = repo['branch'];
     const destination = repo['destPath'];
@@ -77,7 +77,7 @@ export async function makeNbgitpullerRequest(repositories: Repository[]) {
       error: string;
       returncode: number;
     };
-    if (data['returncode'] != 0) {
+    if (data['returncode'] !== 0) {
       failed_updates.push({ repo: repositoryUrl, reason: data['error'] });
     }
   }
@@ -88,7 +88,7 @@ export async function repoUpdateProbe(
   allSettings: ISettingRegistry.ISettings
 ): Promise<void> {
   const repositories = allSettings.get('repos')
-    .composite as any as Repository[];
+    .composite as any as IRepository[];
   const probeInterval = allSettings.get('probeInterval').composite as number;
 
   // Stop previous interval (if settings were changed)
@@ -101,12 +101,15 @@ export async function repoUpdateProbe(
 }
 
 export async function checkForRepoUpdates(
-  repositories: Repository[]
-): Promise<{ response: {}; statuscode: number }> {
-  var numToBeUpdated = 0;
-  var numWithErrors = 0;
+  repositories: IRepository[]
+): Promise<{
+  response: { numToBeUpdated: number; numWithErrors: number };
+  statuscode: number;
+}> {
+  let numToBeUpdated = 0;
+  let numWithErrors = 0;
   // Check every repository
-  for (var repo of repositories) {
+  for (const repo of repositories) {
     // Get relevant repository information
     const repositoryUrl = repo['repoUrl'];
     const repositoryBranch = repo['branch'];
@@ -152,11 +155,13 @@ export async function checkForRepoUpdates(
   };
 }
 
-export async function checkForUpdatesAndSetDisplay(repositories: Repository[]) {
+export async function checkForUpdatesAndSetDisplay(
+  repositories: IRepository[]
+) {
   // Check for updates
   const repoUpdates = await checkForRepoUpdates(repositories);
   // Update display
-  if (repoUpdates['statuscode'] == 0) {
+  if (repoUpdates['statuscode'] === 0) {
     const updateCheckResponse = repoUpdates['response'] as {
       numToBeUpdated: number;
       numWithErrors: number;
@@ -178,12 +183,12 @@ export async function checkForUpdatesAndSetDisplay(repositories: Repository[]) {
     }
     const updateDisplayResponse = await setUpdateButtonDisplay(
       updateCheckResponse['numToBeUpdated'] +
-        updateCheckResponse['numWithErrors'] ==
+        updateCheckResponse['numWithErrors'] ===
         0,
       tooltip,
       repositories
     );
-    if (updateDisplayResponse.returncode != 0) {
+    if (updateDisplayResponse.returncode !== 0) {
       console.error(updateDisplayResponse);
     }
   }
@@ -192,8 +197,8 @@ export async function checkForUpdatesAndSetDisplay(repositories: Repository[]) {
 export async function setUpdateButtonDisplay(
   upToDate: boolean,
   tooltip: string,
-  repositories: Repository[]
-): Promise<{ error: String; returncode: number }> {
+  repositories: IRepository[]
+): Promise<{ error: string; returncode: number }> {
   // Get widget
   const widget: HTMLElement | null = document.getElementById(widget_id);
   if (!widget) {
@@ -201,11 +206,11 @@ export async function setUpdateButtonDisplay(
   }
 
   // Create button label html
-  var labelHTML;
+  let labelHTML;
   if (upToDate) {
-    labelHTML = `<p><span class="success">◉</span> Up to Date</p>`;
+    labelHTML = '<p><span class="success">◉</span> Up to Date</p>';
   } else {
-    labelHTML = `<p><span class="failure blink">◉</span> Update Repos</p>`;
+    labelHTML = '<p><span class="failure blink">◉</span> Update Repos</p>';
   }
 
   function generateWidgetHTML(tooltip: string, labelHTML: string): string {
@@ -229,7 +234,8 @@ export async function setUpdateButtonDisplay(
     currentlyUpdating = true;
     // Update widget to running animation
     const pendingTooltip = 'Updating Repos...';
-    const pendingLabelHTML = `<p><span class="lds-dual-ring"></span> Updating</p>`;
+    const pendingLabelHTML =
+      '<p><span class="lds-dual-ring"></span> Updating</p>';
     widget.innerHTML = generateWidgetHTML(pendingTooltip, pendingLabelHTML);
 
     // Pull each repository
@@ -240,8 +246,8 @@ export async function setUpdateButtonDisplay(
 
     // Notify users of any failure
     if (failed_updates) {
-      let failure_message = `Failed to update the following repos: \n`;
-      for (var failure of failed_updates) {
+      let failure_message = 'Failed to update the following repos: \n';
+      for (const failure of failed_updates) {
         failure_message += `${failure['repo']}`;
       }
       console.log(failure_message);
