@@ -27,9 +27,6 @@ class TestPullRepo:
             capture_output=True,
             text=True
         )
-        print("Grooble")
-        print(mock_subprocess_run.call_args_list)
-        print([expected_call])
         assert mock_subprocess_run.call_args_list == [
             expected_call
         ]
