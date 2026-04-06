@@ -1,4 +1,8 @@
 from subprocess import CompletedProcess
+import pathlib
+import os
+
+BASE_DIR = pathlib.Path(os.getcwd()).resolve()
 
 class TestPullRepo:
     def test_successful_pull(self, mocker, monkeypatch):
@@ -18,11 +22,14 @@ class TestPullRepo:
                 'path/gitpuller',
                 'https://fakerepo.com',
                 'main',
-                'testDir'
+                str(BASE_DIR / 'testDir')
             ],
             capture_output=True,
             text=True
         )
+        print("Grooble")
+        print(mock_subprocess_run.call_args_list)
+        print([expected_call])
         assert mock_subprocess_run.call_args_list == [
             expected_call
         ]
@@ -51,7 +58,7 @@ class TestPullRepo:
                     'path/gitpuller',
                     'https://fakerepo.com',
                     'main',
-                    'testDir'
+                    str(BASE_DIR / 'testDir')
                 ],
                 capture_output=True,
                 text=True
@@ -151,7 +158,7 @@ class TestCheckIfRepoExists:
                 [
                     'path/git',
                     '-C',
-                    'fakepath',
+                    str(BASE_DIR / 'fakepath'),
                     'fetch',
                     'origin',
                     'fakebranch'
@@ -163,7 +170,7 @@ class TestCheckIfRepoExists:
                 [
                     'path/git',
                     '-C',
-                    'fakepath',
+                    str(BASE_DIR / 'fakepath'),
                     'log',
                     'HEAD..origin/fakebranch',
                     '--oneline'
@@ -200,7 +207,7 @@ class TestCheckIfRepoExists:
                 [
                     'path/git',
                     '-C',
-                    'fakepath',
+                    str(BASE_DIR / 'fakepath'),
                     'fetch',
                     'origin',
                     'fakebranch'
@@ -212,7 +219,7 @@ class TestCheckIfRepoExists:
                 [
                     'path/git',
                     '-C',
-                    'fakepath',
+                    str(BASE_DIR / 'fakepath'),
                     'log',
                     'HEAD..origin/fakebranch',
                     '--oneline'
@@ -248,7 +255,7 @@ class TestCheckIfRepoExists:
                 [
                     'path/git',
                     '-C',
-                    'fakepath',
+                    str(BASE_DIR / 'fakepath'),
                     'fetch',
                     'origin',
                     'fakebranch'

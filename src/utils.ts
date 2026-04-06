@@ -136,12 +136,9 @@ export async function checkForRepoUpdates(
     });
     const data = await needUpdate.json();
 
-    console.log(JSON.stringify(data));
-
     if (data['returncode'] !== 0) {
       numWithErrors += 1;
     } else if (data['updatefound']) {
-      // console.log(data["updatefound"]);
       numToBeUpdated += 1;
     }
   }
@@ -245,7 +242,7 @@ export async function setUpdateButtonDisplay(
     checkForUpdatesAndSetDisplay(repositories);
 
     // Notify users of any failure
-    if (failed_updates) {
+    if (failed_updates.length !== 0 ) {
       let failure_message = 'Failed to update the following repos: \n';
       for (const failure of failed_updates) {
         failure_message += `${failure['repo']}`;
