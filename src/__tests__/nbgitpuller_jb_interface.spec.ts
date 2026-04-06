@@ -34,7 +34,6 @@ describe('nbgitpuller-jl-interface utils checkForRepoUpdates', () => {
         }) as unknown as Response
     );
 
-    // const returnValue = await fetch("https://aaagaag.com")
     const returnValue = await checkForRepoUpdates([
       { repoUrl: 'https://fakerepo.com', branch: 'main', destPath: 'mypath' }
     ]);
