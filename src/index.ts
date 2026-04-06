@@ -79,7 +79,7 @@ const plugin: JupyterFrontEndPlugin<void> = {
         console.error(`Something went wrong...${reason}`);
       });
 
-    // // console.log('JupyterLab extension nbgitpuller-jl-interface is activated!');
+    console.log('JupyterLab extension nbgitpuller-jl-interface is activated!');
     // const { commands } = app;
     // let repos = []
 
