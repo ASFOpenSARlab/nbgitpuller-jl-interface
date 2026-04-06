@@ -1,58 +1,48 @@
+---
 name: "Step 2: Publish Release"
-on:
+on:  # yamllint disable-line rule:truthy
   workflow_dispatch:
     inputs:
-      branch:
-        description: "The target branch"
-        required: false
-      release_url:
-        description: "The URL of the draft GitHub release"
-        required: false
-      steps_to_skip:
-        description: "Comma separated list of steps to skip"
-        required: false
+      environment:
+        description: "GitHub environment to use for secrets and variables"
+        default: "prod"
+        required: true
+      tag:
+        description: "Tag of release to publish"
+        required: true
 
 jobs:
   publish_release:
     runs-on: ubuntu-latest
-    environment: release
+    environment: ${{ github.event.inputs.environment }}
     permissions:
+      # This is useful if you want to use PyPI trusted publisher
+      # and NPM provenance
       id-token: write
     steps:
-      - uses: jupyterlab/maintainer-tools/.github/actions/base-setup@v1
+      - name: Checkout Code
+        uses: actions/checkout@v4
 
-      - uses: actions/create-github-app-token@v1
-        id: app-token
-        with:
-          app-id: ${{ vars.APP_ID }}
-          private-key: ${{ secrets.APP_PRIVATE_KEY }}
+      - name: Authenticate GitHub CLI
+        run: echo "${{ secrets.PUBLISH_GITHUB_PAT }}" | gh auth login --with-token
 
-      - name: Populate Release
-        id: populate-release
-        uses: jupyter-server/jupyter_releaser/.github/actions/populate-release@v2
-        with:
-          token: ${{ steps.app-token.outputs.token }}
-          branch: ${{ github.event.inputs.branch }}
-          release_url: ${{ github.event.inputs.release_url }}
-          steps_to_skip: ${{ github.event.inputs.steps_to_skip }}
+      - name: Download all assets from release
+        run: |
+          gh release download ${{ github.event.inputs.tag }} --dir dist --pattern "*.tar.gz" --pattern "*py3-none-any.whl "
 
-      - name: Finalize Release
-        id: finalize-release
-        env:
-          NPM_TOKEN: ${{ secrets.NPM_TOKEN }}
-        uses: jupyter-server/jupyter_releaser/.github/actions/finalize-release@v2
+      - name: Publish package distributions to PyPI
+        uses: pypa/gh-action-pypi-publish@release/v1
         with:
-          token: ${{ steps.app-token.outputs.token }}
-          release_url: ${{ steps.populate-release.outputs.release_url }}
+          password: ${{ secrets.PYPI_TOKEN }}
+          repository-url: ${{ vars.REPOSITORY_URL }}
+          verbose: true
 
       - name: "** Next Step **"
         if: ${{ success() }}
         run: |
-          echo "Verify the final release"
-          echo ${{ steps.finalize-release.outputs.release_url }}
+          echo "Success! Verify the final release"
 
       - name: "** Failure Message **"
         if: ${{ failure() }}
-        run: |
-          echo "Failed to Publish the Draft Release Url:"
-          echo ${{ steps.populate-release.outputs.release_url }}
+        run: |-
+          echo "Failed to Publish the Release with tag ${{ github.event.inputs.tag }}"

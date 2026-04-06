@@ -4,13 +4,11 @@ import {
   JupyterFrontEndPlugin
 } from '@jupyterlab/application';
 
-import { makeNbgitpullerRequest } from './utils';
-
-import { Widget } from '@lumino/widgets';
+import { nbgitpullerUpdateButton, repoUpdateProbe } from './utils';
 
 import { ISettingRegistry } from '@jupyterlab/settingregistry';
 
-// import { requestAPI } from './request';
+import { ICommandPalette } from '@jupyterlab/apputils';
 
 /**
  * Initialization data for the nbgitpuller-jl-interface extension.
@@ -32,62 +30,56 @@ const plugin: JupyterFrontEndPlugin<void> = {
   id: 'nbgitpuller-jl-interface:plugin',
   description: 'A human interface with nbgitpuller in JupyterBook',
   autoStart: true,
-  optional: [ISettingRegistry],
-  requires: [ILabShell],
+  optional: [],
+  requires: [ILabShell, ICommandPalette, ISettingRegistry],
   activate: (
     app: JupyterFrontEnd,
     shell: ILabShell,
+    palette: ICommandPalette,
     settingRegistry: ISettingRegistry | null
   ) => {
-    console.log('JupyterLab extension nbgitpuller-jl-interface is activated!');
-
-    if (settingRegistry) {
-      settingRegistry
-        .load(plugin.id)
-        .then(settings => {
-          console.log(
-            'nbgitpuller-jl-interface settings loaded:',
-            settings.composite
-          );
-        })
-        .catch(reason => {
-          console.error(
-            'Failed to load settings for nbgitpuller-jl-interface.',
-            reason
-          );
-        });
+    // Wait for the application to be restored and
+    // for the settings for this plugin to be loaded
+    if (!settingRegistry) {
+      console.log(
+        'Settings not found. nbgitpuller-jl-interface cannot be established.'
+      );
+      return;
     }
 
-    // requestAPI<any>('hello', app.serviceManager.serverSettings)
-    //   .then(data => {
-    //     console.log(data);
-    //   })
-    //   .catch(reason => {
-    //     console.error(
-    //       `The nbgitpuller_jl_interface server extension appears to be missing.\n${reason}`
-    //     );
-    //   });
+    // Initialize buttons
+    Promise.all([app.restored, settingRegistry.load(plugin.id)])
+      .then(async ([, settings]) => {
+        // reloadWidget on extension loading
+        await settings.set('reloadWidget', true);
 
-    const widget = new Widget();
-    widget.id = '@jupyterlab-sidepanel/nbgitpuller-jl-interface';
-    widget.title.iconClass = 'jbook-icon2 jp-SideBar-tabIcon';
-    widget.title.className = 'jbook-tab';
-    widget.title.caption = 'NBGitpuller';
+        async function loadSettings(
+          allSettings: ISettingRegistry.ISettings
+        ): Promise<void> {
+          const reloadWidget = allSettings.get('reloadWidget')
+            .composite as boolean;
+          if (reloadWidget) {
+            await nbgitpullerUpdateButton(app, allSettings);
+            await repoUpdateProbe(allSettings);
+            await allSettings.set('reloadWidget', false);
+          }
+        }
 
-    const gitpullerBtn = document.createElement('button');
-    gitpullerBtn.innerHTML = 'Update';
-    gitpullerBtn.onclick = async () => {
-      const resp = await makeNbgitpullerRequest(
-        'https://github.com/ASFOpenSARlab/opensarlab-notebooks.git',
-        'notebooks',
-        'master'
-      );
-      console.log(`response data: ${JSON.stringify(resp)}`);
-    };
-    widget.node.appendChild(gitpullerBtn);
+        // Read the settings
+        loadSettings(settings);
 
-    shell.add(widget, 'left', { rank: 400 });
-    widget.activate();
+        // Listen for your plugin setting changes using Signal
+        settings.changed.connect(loadSettings);
+
+        console.log(
+          'JupyterLab extension nbgitpuller-jl-interface is fully operational!'
+        );
+      })
+      .catch(reason => {
+        console.error(`Something went wrong...${reason}`);
+      });
+
+    console.log('JupyterLab extension nbgitpuller-jl-interface is activated!');
   }
 };
 
