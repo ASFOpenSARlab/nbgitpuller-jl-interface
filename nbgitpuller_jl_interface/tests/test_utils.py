@@ -125,14 +125,6 @@ class TestCheckIfRepoExists:
         
 
 class TestCheckIfRepoExists:
-    def test_test(self, mocker, monkeypatch):
-        from nbgitpuller_jl_interface.utils import checkForRepoUpdate
-        result = checkForRepoUpdate(
-            destination="fakepath", 
-            branch=""
-        )
-        pass
-
     def test_repo_exists_no_update(self, mocker, monkeypatch):
         from nbgitpuller_jl_interface.utils import checkForRepoUpdate
         
