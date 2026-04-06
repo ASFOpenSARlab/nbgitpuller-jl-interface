@@ -13,6 +13,8 @@ test('should emit an activation console message', async ({ page }) => {
     logs.push(message.text());
   });
 
+  // Getting stuck on token login page for some reason?
+  
   // await page.goto("http://localhost:8888/?token=");
   await page.goto();
   // const password_field = page.locator("input[name='password']");
