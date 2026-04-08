@@ -18,7 +18,8 @@ export interface IRepository {
 
 export async function nbgitpullerUpdateButton(
   app: JupyterFrontEnd,
-  allSettings: ISettingRegistry.ISettings
+  allSettings: ISettingRegistry.ISettings,
+  baseUrl: string
 ): Promise<void> {
   const repositories = allSettings.get('repos')
     .composite as any as IRepository[];
@@ -42,13 +43,13 @@ export async function nbgitpullerUpdateButton(
   app.shell.add(updateReposBtn, 'top', { rank: rank });
 
   // Check for updates
-  checkForUpdatesAndSetDisplay(repositories);
+  checkForUpdatesAndSetDisplay(repositories, baseUrl);
 
   console.log('nbgitpuller-jl-interface settings loaded');
 }
 
-export async function makeNbgitpullerRequest(repositories: IRepository[]) {
-  const url = window.location.origin + '/nbgitpuller-jl-interface/gitpuller';
+export async function makeNbgitpullerRequest(repositories: IRepository[], baseUrl: string) {
+  const url = window.location.origin + baseUrl + 'nbgitpuller-jl-interface/gitpuller';
   const xsrfToken = document.cookie
     .split(';')
     .find(row => row.startsWith('_xsrf='))
@@ -85,7 +86,7 @@ export async function makeNbgitpullerRequest(repositories: IRepository[]) {
 }
 
 export async function repoUpdateProbe(
-  allSettings: ISettingRegistry.ISettings
+  allSettings: ISettingRegistry.ISettings, baseUrl: string
 ): Promise<void> {
   const repositories = allSettings.get('repos')
     .composite as any as IRepository[];
@@ -96,12 +97,12 @@ export async function repoUpdateProbe(
 
   // Create interval
   intervalID = setInterval(async () => {
-    checkForUpdatesAndSetDisplay(repositories);
+    checkForUpdatesAndSetDisplay(repositories, baseUrl);
   }, probeInterval);
 }
 
 export async function checkForRepoUpdates(
-  repositories: IRepository[]
+  repositories: IRepository[], baseUrl: string
 ): Promise<{
   response: { numToBeUpdated: number; numWithErrors: number };
   statuscode: number;
@@ -116,8 +117,7 @@ export async function checkForRepoUpdates(
     const destination = repo['destPath'];
 
     // Poll repo for any new commits
-    const url =
-      window.location.origin + '/nbgitpuller-jl-interface/update-check';
+    const url = window.location.origin + baseUrl + 'nbgitpuller-jl-interface/update-check';
     const xsrfToken = document.cookie
       .split(';')
       .find(row => row.startsWith('_xsrf='))
@@ -153,10 +153,10 @@ export async function checkForRepoUpdates(
 }
 
 export async function checkForUpdatesAndSetDisplay(
-  repositories: IRepository[]
+  repositories: IRepository[], baseUrl: string
 ) {
   // Check for updates
-  const repoUpdates = await checkForRepoUpdates(repositories);
+  const repoUpdates = await checkForRepoUpdates(repositories, baseUrl);
   // Update display
   if (repoUpdates['statuscode'] === 0) {
     const updateCheckResponse = repoUpdates['response'] as {
@@ -183,7 +183,8 @@ export async function checkForUpdatesAndSetDisplay(
         updateCheckResponse['numWithErrors'] ===
         0,
       tooltip,
-      repositories
+      repositories,
+      baseUrl,
     );
     if (updateDisplayResponse.returncode !== 0) {
       console.error(updateDisplayResponse);
@@ -194,7 +195,8 @@ export async function checkForUpdatesAndSetDisplay(
 export async function setUpdateButtonDisplay(
   upToDate: boolean,
   tooltip: string,
-  repositories: IRepository[]
+  repositories: IRepository[],
+  baseUrl: string
 ): Promise<{ error: string; returncode: number }> {
   // Get widget
   const widget: HTMLElement | null = document.getElementById(widget_id);
@@ -236,10 +238,10 @@ export async function setUpdateButtonDisplay(
     widget.innerHTML = generateWidgetHTML(pendingTooltip, pendingLabelHTML);
 
     // Pull each repository
-    const failed_updates = await makeNbgitpullerRequest(repositories);
+    const failed_updates = await makeNbgitpullerRequest(repositories, baseUrl);
 
     // Update widget to all updated or pending updates
-    checkForUpdatesAndSetDisplay(repositories);
+    checkForUpdatesAndSetDisplay(repositories, baseUrl);
 
     // Notify users of any failure
     if (failed_updates.length !== 0) {

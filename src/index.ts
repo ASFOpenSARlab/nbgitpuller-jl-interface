@@ -31,13 +31,16 @@ const plugin: JupyterFrontEndPlugin<void> = {
   description: 'A human interface with nbgitpuller in JupyterBook',
   autoStart: true,
   optional: [],
-  requires: [ILabShell, ICommandPalette, ISettingRegistry],
+  requires: [ILabShell, ICommandPalette, ISettingRegistry, JupyterFrontEnd.IPaths],
   activate: (
     app: JupyterFrontEnd,
     shell: ILabShell,
     palette: ICommandPalette,
-    settingRegistry: ISettingRegistry | null
+    settingRegistry: ISettingRegistry | null,
+    paths: JupyterFrontEnd.IPaths,
   ) => {
+    const baseUrl = paths?.urls?.base;
+
     // Wait for the application to be restored and
     // for the settings for this plugin to be loaded
     if (!settingRegistry) {
@@ -54,22 +57,23 @@ const plugin: JupyterFrontEndPlugin<void> = {
         await settings.set('reloadWidget', true);
 
         async function loadSettings(
-          allSettings: ISettingRegistry.ISettings
+          allSettings: ISettingRegistry.ISettings,
+          baseUrl: string
         ): Promise<void> {
           const reloadWidget = allSettings.get('reloadWidget')
             .composite as boolean;
           if (reloadWidget) {
-            await nbgitpullerUpdateButton(app, allSettings);
-            await repoUpdateProbe(allSettings);
+            await nbgitpullerUpdateButton(app, allSettings, baseUrl);
+            await repoUpdateProbe(allSettings, baseUrl);
             await allSettings.set('reloadWidget', false);
           }
         }
 
         // Read the settings
-        loadSettings(settings);
+        loadSettings(settings, baseUrl);
 
         // Listen for your plugin setting changes using Signal
-        settings.changed.connect(loadSettings);
+        settings.changed.connect((settings) => loadSettings(settings, baseUrl));
 
         console.log(
           'JupyterLab extension nbgitpuller-jl-interface is fully operational!'
