@@ -34,9 +34,10 @@ describe('nbgitpuller-jl-interface utils checkForRepoUpdates', () => {
         }) as unknown as Response
     );
 
-    const returnValue = await checkForRepoUpdates([
-      { repoUrl: 'https://fakerepo.com', branch: 'main', destPath: 'mypath' }
-    ]);
+    const returnValue = await checkForRepoUpdates(
+      [{ repoUrl: 'https://fakerepo.com', branch: 'main', destPath: 'mypath' }],
+      '/'
+    );
 
     expect(returnValue).toStrictEqual({
       response: { numToBeUpdated: 1, numWithErrors: 0 },
@@ -60,9 +61,10 @@ describe('nbgitpuller-jl-interface utils checkForRepoUpdates', () => {
     );
 
     // const returnValue = await fetch("https://aaagaag.com")
-    const returnValue = await checkForRepoUpdates([
-      { repoUrl: 'https://fakerepo.com', branch: 'main', destPath: 'mypath' }
-    ]);
+    const returnValue = await checkForRepoUpdates(
+      [{ repoUrl: 'https://fakerepo.com', branch: 'main', destPath: 'mypath' }],
+      '/'
+    );
 
     expect(returnValue).toStrictEqual({
       response: { numToBeUpdated: 0, numWithErrors: 1 },
@@ -114,11 +116,14 @@ describe('nbgitpuller-jl-interface utils checkForRepoUpdates', () => {
       );
 
     // const returnValue = await fetch("https://aaagaag.com")
-    const returnValue = await checkForRepoUpdates([
-      { repoUrl: 'https://fakerepo.com', branch: 'main', destPath: 'mypath' },
-      { repoUrl: 'https://fakerepo.com', branch: 'main', destPath: 'mypath' },
-      { repoUrl: 'https://fakerepo.com', branch: 'main', destPath: 'mypath' }
-    ]);
+    const returnValue = await checkForRepoUpdates(
+      [
+        { repoUrl: 'https://fakerepo.com', branch: 'main', destPath: 'mypath' },
+        { repoUrl: 'https://fakerepo.com', branch: 'main', destPath: 'mypath' },
+        { repoUrl: 'https://fakerepo.com', branch: 'main', destPath: 'mypath' }
+      ],
+      '/'
+    );
     expect(returnValue).toStrictEqual({
       response: { numToBeUpdated: 2, numWithErrors: 1 },
       statuscode: 0
@@ -139,9 +144,12 @@ describe('nbgitpuller-jl-interface utils setUpdateButtonDisplay', () => {
     widget.id = 'nbgitpuller-jl-interface-update-btn';
     document.body.appendChild(widget);
 
-    const returnValue = await setUpdateButtonDisplay(true, '', [
-      { repoUrl: 'https://fakerepo.com', branch: 'main', destPath: 'mypath' }
-    ]);
+    const returnValue = await setUpdateButtonDisplay(
+      true,
+      '',
+      [{ repoUrl: 'https://fakerepo.com', branch: 'main', destPath: 'mypath' }],
+      '/'
+    );
 
     expect(returnValue).toStrictEqual({ error: '', returncode: 0 });
     expect(widget.innerHTML).toContain(`<span class="success">◉</span>`);
@@ -152,18 +160,24 @@ describe('nbgitpuller-jl-interface utils setUpdateButtonDisplay', () => {
     widget.id = 'nbgitpuller-jl-interface-update-btn';
     document.body.appendChild(widget);
 
-    const returnValue = await setUpdateButtonDisplay(false, '', [
-      { repoUrl: 'https://fakerepo.com', branch: 'main', destPath: 'mypath' }
-    ]);
+    const returnValue = await setUpdateButtonDisplay(
+      false,
+      '',
+      [{ repoUrl: 'https://fakerepo.com', branch: 'main', destPath: 'mypath' }],
+      '/'
+    );
 
     expect(returnValue).toStrictEqual({ error: '', returncode: 0 });
     expect(widget.innerHTML).toContain(`<span class="failure blink">◉</span>`);
   });
 
   it('widget not found', async () => {
-    const returnValue = await setUpdateButtonDisplay(false, '', [
-      { repoUrl: 'https://fakerepo.com', branch: 'main', destPath: 'mypath' }
-    ]);
+    const returnValue = await setUpdateButtonDisplay(
+      false,
+      '',
+      [{ repoUrl: 'https://fakerepo.com', branch: 'main', destPath: 'mypath' }],
+      '/'
+    );
 
     expect(returnValue).toStrictEqual({
       error: 'Unable to find nbgitpuller widget',
