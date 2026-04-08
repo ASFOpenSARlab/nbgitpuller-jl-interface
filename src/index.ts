@@ -31,13 +31,18 @@ const plugin: JupyterFrontEndPlugin<void> = {
   description: 'A human interface with nbgitpuller in JupyterBook',
   autoStart: true,
   optional: [],
-  requires: [ILabShell, ICommandPalette, ISettingRegistry, JupyterFrontEnd.IPaths],
+  requires: [
+    ILabShell,
+    ICommandPalette,
+    ISettingRegistry,
+    JupyterFrontEnd.IPaths
+  ],
   activate: (
     app: JupyterFrontEnd,
     shell: ILabShell,
     palette: ICommandPalette,
     settingRegistry: ISettingRegistry | null,
-    paths: JupyterFrontEnd.IPaths,
+    paths: JupyterFrontEnd.IPaths
   ) => {
     const baseUrl = paths?.urls?.base;
 
@@ -73,7 +78,7 @@ const plugin: JupyterFrontEndPlugin<void> = {
         loadSettings(settings, baseUrl);
 
         // Listen for your plugin setting changes using Signal
-        settings.changed.connect((settings) => loadSettings(settings, baseUrl));
+        settings.changed.connect(settings => loadSettings(settings, baseUrl));
 
         console.log(
           'JupyterLab extension nbgitpuller-jl-interface is fully operational!'

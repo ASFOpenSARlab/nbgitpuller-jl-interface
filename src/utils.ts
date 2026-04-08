@@ -48,8 +48,12 @@ export async function nbgitpullerUpdateButton(
   console.log('nbgitpuller-jl-interface settings loaded');
 }
 
-export async function makeNbgitpullerRequest(repositories: IRepository[], baseUrl: string) {
-  const url = window.location.origin + baseUrl + 'nbgitpuller-jl-interface/gitpuller';
+export async function makeNbgitpullerRequest(
+  repositories: IRepository[],
+  baseUrl: string
+) {
+  const url =
+    window.location.origin + baseUrl + 'nbgitpuller-jl-interface/gitpuller';
   const xsrfToken = document.cookie
     .split(';')
     .find(row => row.startsWith('_xsrf='))
@@ -86,7 +90,8 @@ export async function makeNbgitpullerRequest(repositories: IRepository[], baseUr
 }
 
 export async function repoUpdateProbe(
-  allSettings: ISettingRegistry.ISettings, baseUrl: string
+  allSettings: ISettingRegistry.ISettings,
+  baseUrl: string
 ): Promise<void> {
   const repositories = allSettings.get('repos')
     .composite as any as IRepository[];
@@ -102,7 +107,8 @@ export async function repoUpdateProbe(
 }
 
 export async function checkForRepoUpdates(
-  repositories: IRepository[], baseUrl: string
+  repositories: IRepository[],
+  baseUrl: string
 ): Promise<{
   response: { numToBeUpdated: number; numWithErrors: number };
   statuscode: number;
@@ -117,7 +123,10 @@ export async function checkForRepoUpdates(
     const destination = repo['destPath'];
 
     // Poll repo for any new commits
-    const url = window.location.origin + baseUrl + 'nbgitpuller-jl-interface/update-check';
+    const url =
+      window.location.origin +
+      baseUrl +
+      'nbgitpuller-jl-interface/update-check';
     const xsrfToken = document.cookie
       .split(';')
       .find(row => row.startsWith('_xsrf='))
@@ -153,7 +162,8 @@ export async function checkForRepoUpdates(
 }
 
 export async function checkForUpdatesAndSetDisplay(
-  repositories: IRepository[], baseUrl: string
+  repositories: IRepository[],
+  baseUrl: string
 ) {
   // Check for updates
   const repoUpdates = await checkForRepoUpdates(repositories, baseUrl);
@@ -184,7 +194,7 @@ export async function checkForUpdatesAndSetDisplay(
         0,
       tooltip,
       repositories,
-      baseUrl,
+      baseUrl
     );
     if (updateDisplayResponse.returncode !== 0) {
       console.error(updateDisplayResponse);
