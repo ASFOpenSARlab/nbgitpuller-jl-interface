@@ -77,9 +77,13 @@ const plugin: JupyterFrontEndPlugin<void> = {
         await checkForRepoUpdates(settings.get('repos').composite as any as IRepository[]);
         console.log(`Brungle4 ${reloadWidget}`)
           if (reloadWidget) {
+            console.log(`Brungle5`);
             await nbgitpullerUpdateButton(app, allSettings);
+            console.log(`Brungle6`);
             await repoUpdateProbe(allSettings);
+            console.log(`Brungle7`);
             await allSettings.set('reloadWidget', false);
+            console.log(`Brungle8`);
           }
         }
         
