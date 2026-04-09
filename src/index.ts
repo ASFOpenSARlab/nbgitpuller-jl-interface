@@ -56,12 +56,6 @@ const plugin: JupyterFrontEndPlugin<void> = {
     // Initialize buttons
     Promise.all([app.restored, settingRegistry.load(plugin.id)])
       .then(async ([, settings]) => {
-        // reloadWidget on extension loading
-        await settings.set('reloadWidget', true);
-        //Debug
-        await checkForRepoUpdates(settings.get('repos').composite as any as IRepository[]);
-        console.log("Brungle")
-
         async function loadSettings(
           allSettings: ISettingRegistry.ISettings
         ): Promise<void> {
@@ -73,6 +67,12 @@ const plugin: JupyterFrontEndPlugin<void> = {
             await allSettings.set('reloadWidget', false);
           }
         }
+        // reloadWidget on extension loading
+        await settings.set('reloadWidget', true);
+        //Debug
+        await checkForRepoUpdates(settings.get('repos').composite as any as IRepository[]);
+        console.log("Brungle")
+
 
         // Read the settings
         await loadSettings(settings);
