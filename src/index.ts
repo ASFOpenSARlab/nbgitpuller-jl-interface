@@ -58,6 +58,9 @@ const plugin: JupyterFrontEndPlugin<void> = {
       .then(async ([, settings]) => {
         // reloadWidget on extension loading
         await settings.set('reloadWidget', true);
+        //Debug
+        await checkForRepoUpdates(settings.get('repos').composite as any as IRepository[]);
+        console.log("Brungle")
 
         async function loadSettings(
           allSettings: ISettingRegistry.ISettings
@@ -67,8 +70,6 @@ const plugin: JupyterFrontEndPlugin<void> = {
           if (reloadWidget) {
             await nbgitpullerUpdateButton(app, allSettings);
             await repoUpdateProbe(allSettings);
-            //Debug
-            await checkForRepoUpdates(allSettings.get('repos').composite as any as IRepository[]);
             await allSettings.set('reloadWidget', false);
           }
         }
