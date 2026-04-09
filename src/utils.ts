@@ -6,7 +6,7 @@ import { find } from '@lumino/algorithm';
 
 import { ISettingRegistry } from '@jupyterlab/settingregistry';
 
-import { ServerConnection } from '@jupyterlab/services';
+// import { ServerConnection } from '@jupyterlab/services';
 // import { PageConfig } from '@jupyterlab/coreutils';
 import { PageConfig, URLExt } from '@jupyterlab/coreutils';
 
