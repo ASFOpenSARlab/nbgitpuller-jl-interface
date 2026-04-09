@@ -52,9 +52,7 @@ export async function nbgitpullerUpdateButton(
   console.log('nbgitpuller-jl-interface settings loaded');
 }
 
-export async function makeNbgitpullerRequest(
-  repositories: IRepository[]
-) {
+export async function makeNbgitpullerRequest(repositories: IRepository[]) {
   const baseUrl = PageConfig.getBaseUrl();
   const url = URLExt.join(baseUrl, 'nbgitpuller-jl-interface', 'gitpuller');
   const xsrfToken = document.cookie
@@ -125,7 +123,11 @@ export async function checkForRepoUpdates(
 
     // Poll repo for any new commits
     const baseUrl = PageConfig.getBaseUrl();
-    const url = URLExt.join(baseUrl, 'nbgitpuller-jl-interface', 'update-check');
+    const url = URLExt.join(
+      baseUrl,
+      'nbgitpuller-jl-interface',
+      'update-check'
+    );
     const xsrfToken = document.cookie
       .split(';')
       .find(row => row.startsWith('_xsrf='))
