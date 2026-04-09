@@ -6,8 +6,6 @@ import { find } from '@lumino/algorithm';
 
 import { ISettingRegistry } from '@jupyterlab/settingregistry';
 
-// import { ServerConnection } from '@jupyterlab/services';
-// import { PageConfig } from '@jupyterlab/coreutils';
 import { PageConfig, URLExt } from '@jupyterlab/coreutils';
 
 const widget_id = 'nbgitpuller-jl-interface-update-btn';
@@ -24,7 +22,6 @@ export async function nbgitpullerUpdateButton(
   app: JupyterFrontEnd,
   allSettings: ISettingRegistry.ISettings
 ): Promise<void> {
-  console.log("Grooble1");
   const repositories = allSettings.get('repos')
     .composite as any as IRepository[];
   const rank = allSettings.get('rank').composite as number;
@@ -59,11 +56,7 @@ export async function makeNbgitpullerRequest(
   repositories: IRepository[]
 ) {
   const baseUrl = PageConfig.getBaseUrl();
-  console.log("TEST PRINT2")
   const url = URLExt.join(baseUrl, 'nbgitpuller-jl-interface', 'gitpuller');
-  console.log(url);
-  // const url =
-  //   window.location.origin + baseUrl + 'nbgitpuller-jl-interface/gitpuller';
   const xsrfToken = document.cookie
     .split(';')
     .find(row => row.startsWith('_xsrf='))
@@ -102,21 +95,17 @@ export async function makeNbgitpullerRequest(
 export async function repoUpdateProbe(
   allSettings: ISettingRegistry.ISettings
 ): Promise<void> {
-  console.log("Flim1");
   const repositories = allSettings.get('repos')
     .composite as any as IRepository[];
   const probeInterval = allSettings.get('probeInterval').composite as number;
 
-  console.log("Flim2");
   // Stop previous interval (if settings were changed)
   clearInterval(intervalID);
 
-  console.log("Flim3");
   // Create interval
   intervalID = setInterval(async () => {
     await checkForUpdatesAndSetDisplay(repositories);
   }, probeInterval);
-  console.log("Flim4");
 }
 
 export async function checkForRepoUpdates(
@@ -174,10 +163,9 @@ export async function checkForRepoUpdates(
 export async function checkForUpdatesAndSetDisplay(
   repositories: IRepository[]
 ) {
-  console.log("UPDATEDISP1");
   // Check for updates
   const repoUpdates = await checkForRepoUpdates(repositories);
-  console.log(`UPDATEDISP2 ${JSON.stringify(repoUpdates)}`);
+
   // Update display
   if (repoUpdates['statuscode'] === 0) {
     const updateCheckResponse = repoUpdates['response'] as {
@@ -199,9 +187,7 @@ export async function checkForUpdatesAndSetDisplay(
     } else {
       tooltip = `${repositories.length} Repos up to date`;
     }
-    console.log(`UPDATEDISP3 ${updateCheckResponse['numToBeUpdated'] +
-        updateCheckResponse['numWithErrors'] ===
-        0}`);
+
     const updateDisplayResponse = await setUpdateButtonDisplay(
       updateCheckResponse['numToBeUpdated'] +
         updateCheckResponse['numWithErrors'] ===
