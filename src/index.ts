@@ -4,7 +4,7 @@ import {
   JupyterFrontEndPlugin
 } from '@jupyterlab/application';
 
-import { nbgitpullerUpdateButton, repoUpdateProbe } from './utils';
+import { nbgitpullerUpdateButton, repoUpdateProbe, checkForRepoUpdates, IRepository } from './utils';
 
 import { ISettingRegistry } from '@jupyterlab/settingregistry';
 
@@ -67,6 +67,8 @@ const plugin: JupyterFrontEndPlugin<void> = {
           if (reloadWidget) {
             await nbgitpullerUpdateButton(app, allSettings);
             await repoUpdateProbe(allSettings);
+            //Debug
+            await checkForRepoUpdates(allSettings.get('repos').composite as any as IRepository[]);
             await allSettings.set('reloadWidget', false);
           }
         }
