@@ -75,7 +75,7 @@ const plugin: JupyterFrontEndPlugin<void> = {
         }
 
         // Read the settings
-        loadSettings(settings);
+        await loadSettings(settings);
 
         // Listen for your plugin setting changes using Signal
         settings.changed.connect(loadSettings);
