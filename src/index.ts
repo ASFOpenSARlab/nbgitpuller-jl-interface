@@ -56,26 +56,39 @@ const plugin: JupyterFrontEndPlugin<void> = {
     // Initialize buttons
     Promise.all([app.restored, settingRegistry.load(plugin.id)])
       .then(async ([, settings]) => {
+        // reloadWidget on extension loading
+        await settings.set('reloadWidget', true);
+
+        //Debug
+        await checkForRepoUpdates(settings.get('repos').composite as any as IRepository[]);
+        console.log("Brungle")
+
         async function loadSettings(
           allSettings: ISettingRegistry.ISettings
         ): Promise<void> {
+        
+        //Debug
+        await checkForRepoUpdates(settings.get('repos').composite as any as IRepository[]);
+        console.log("Brungle3")
           const reloadWidget = allSettings.get('reloadWidget')
             .composite as boolean;
+        
+        //Debug
+        await checkForRepoUpdates(settings.get('repos').composite as any as IRepository[]);
+        console.log(`Brungle4 ${reloadWidget}`)
           if (reloadWidget) {
             await nbgitpullerUpdateButton(app, allSettings);
             await repoUpdateProbe(allSettings);
             await allSettings.set('reloadWidget', false);
           }
         }
-        // reloadWidget on extension loading
-        await settings.set('reloadWidget', true);
+        
         //Debug
         await checkForRepoUpdates(settings.get('repos').composite as any as IRepository[]);
-        console.log("Brungle")
-
+        console.log("Brungle2")
 
         // Read the settings
-        await loadSettings(settings);
+        loadSettings(settings);
 
         // Listen for your plugin setting changes using Signal
         settings.changed.connect(loadSettings);

@@ -54,8 +54,10 @@ export async function nbgitpullerUpdateButton(
 export async function makeNbgitpullerRequest(
   repositories: IRepository[]
 ) {
-  const settings = ServerConnection.makeSettings();
-  const url = URLExt.join(settings.baseUrl, 'nbgitpuller-jl-interface', 'gitpuller');
+  const baseUrl = PageConfig.getBaseUrl();
+  console.log("TEST PRINT2")
+  const url = URLExt.join(baseUrl, 'nbgitpuller-jl-interface', 'gitpuller');
+  console.log(url);
   // const url =
   //   window.location.origin + baseUrl + 'nbgitpuller-jl-interface/gitpuller';
   const xsrfToken = document.cookie
@@ -127,15 +129,13 @@ export async function checkForRepoUpdates(
     // Poll repo for any new commits
     const baseUrl = PageConfig.getBaseUrl();
     console.log("TEST PRINT")
-    console.log(baseUrl)
-    const settings = ServerConnection.makeSettings();
-    const url2 = URLExt.join(settings.baseUrl, 'nbgitpuller-jl-interface', 'update-check');
-    console.log(url2);
-    const url =
-      window.location.origin +
-      baseUrl +
-      'nbgitpuller-jl-interface/update-check';
-    console.log(url)
+    const url = URLExt.join(baseUrl, 'nbgitpuller-jl-interface', 'update-check');
+    console.log(url);
+    // const url =
+    //   window.location.origin +
+    //   baseUrl +
+    //   'nbgitpuller-jl-interface/update-check';
+    // console.log(url)
     const xsrfToken = document.cookie
       .split(';')
       .find(row => row.startsWith('_xsrf='))
