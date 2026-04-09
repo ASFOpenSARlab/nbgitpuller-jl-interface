@@ -62,24 +62,13 @@ const plugin: JupyterFrontEndPlugin<void> = {
         async function loadSettings(
           allSettings: ISettingRegistry.ISettings
         ): Promise<void> {
-        
-        //Debug
-        await checkForRepoUpdates(settings.get('repos').composite as any as IRepository[]);
-        console.log("Brungle3")
           const reloadWidget = allSettings.get('reloadWidget')
             .composite as boolean;
         
-        //Debug
-        await checkForRepoUpdates(settings.get('repos').composite as any as IRepository[]);
-        console.log(`Brungle4 ${reloadWidget}`)
           if (reloadWidget) {
-            console.log(`Brungle5`);
             await nbgitpullerUpdateButton(app, allSettings);
-            console.log(`Brungle6`);
             await repoUpdateProbe(allSettings);
-            console.log(`Brungle7`);
             await allSettings.set('reloadWidget', false);
-            console.log(`Brungle8`);
           }
         }
         

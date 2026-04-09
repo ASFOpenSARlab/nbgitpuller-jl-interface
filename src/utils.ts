@@ -99,18 +99,21 @@ export async function makeNbgitpullerRequest(
 export async function repoUpdateProbe(
   allSettings: ISettingRegistry.ISettings
 ): Promise<void> {
-  console.log("Grooble2");
+  console.log("Flim1");
   const repositories = allSettings.get('repos')
     .composite as any as IRepository[];
   const probeInterval = allSettings.get('probeInterval').composite as number;
 
+  console.log("Flim2");
   // Stop previous interval (if settings were changed)
   clearInterval(intervalID);
 
+  console.log("Flim3");
   // Create interval
   intervalID = setInterval(async () => {
     checkForUpdatesAndSetDisplay(repositories);
   }, probeInterval);
+  console.log("Flim4");
 }
 
 export async function checkForRepoUpdates(
@@ -175,6 +178,7 @@ export async function checkForRepoUpdates(
 export async function checkForUpdatesAndSetDisplay(
   repositories: IRepository[]
 ) {
+  console.log("UPDATEDISP1")
   // Check for updates
   const repoUpdates = await checkForRepoUpdates(repositories);
   // Update display
