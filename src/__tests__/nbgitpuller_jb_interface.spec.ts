@@ -36,7 +36,6 @@ describe('nbgitpuller-jl-interface utils checkForRepoUpdates', () => {
 
     const returnValue = await checkForRepoUpdates(
       [{ repoUrl: 'https://fakerepo.com', branch: 'main', destPath: 'mypath' }],
-      '/'
     );
 
     expect(returnValue).toStrictEqual({
@@ -63,7 +62,6 @@ describe('nbgitpuller-jl-interface utils checkForRepoUpdates', () => {
     // const returnValue = await fetch("https://aaagaag.com")
     const returnValue = await checkForRepoUpdates(
       [{ repoUrl: 'https://fakerepo.com', branch: 'main', destPath: 'mypath' }],
-      '/'
     );
 
     expect(returnValue).toStrictEqual({
@@ -122,7 +120,6 @@ describe('nbgitpuller-jl-interface utils checkForRepoUpdates', () => {
         { repoUrl: 'https://fakerepo.com', branch: 'main', destPath: 'mypath' },
         { repoUrl: 'https://fakerepo.com', branch: 'main', destPath: 'mypath' }
       ],
-      '/'
     );
     expect(returnValue).toStrictEqual({
       response: { numToBeUpdated: 2, numWithErrors: 1 },
@@ -147,8 +144,7 @@ describe('nbgitpuller-jl-interface utils setUpdateButtonDisplay', () => {
     const returnValue = await setUpdateButtonDisplay(
       true,
       '',
-      [{ repoUrl: 'https://fakerepo.com', branch: 'main', destPath: 'mypath' }],
-      '/'
+      [{ repoUrl: 'https://fakerepo.com', branch: 'main', destPath: 'mypath' }]
     );
 
     expect(returnValue).toStrictEqual({ error: '', returncode: 0 });
@@ -163,8 +159,7 @@ describe('nbgitpuller-jl-interface utils setUpdateButtonDisplay', () => {
     const returnValue = await setUpdateButtonDisplay(
       false,
       '',
-      [{ repoUrl: 'https://fakerepo.com', branch: 'main', destPath: 'mypath' }],
-      '/'
+      [{ repoUrl: 'https://fakerepo.com', branch: 'main', destPath: 'mypath' }]
     );
 
     expect(returnValue).toStrictEqual({ error: '', returncode: 0 });
@@ -175,8 +170,7 @@ describe('nbgitpuller-jl-interface utils setUpdateButtonDisplay', () => {
     const returnValue = await setUpdateButtonDisplay(
       false,
       '',
-      [{ repoUrl: 'https://fakerepo.com', branch: 'main', destPath: 'mypath' }],
-      '/'
+      [{ repoUrl: 'https://fakerepo.com', branch: 'main', destPath: 'mypath' }]
     );
 
     expect(returnValue).toStrictEqual({
