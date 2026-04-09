@@ -59,10 +59,6 @@ const plugin: JupyterFrontEndPlugin<void> = {
         // reloadWidget on extension loading
         await settings.set('reloadWidget', true);
 
-        //Debug
-        await checkForRepoUpdates(settings.get('repos').composite as any as IRepository[]);
-        console.log("Brungle")
-
         async function loadSettings(
           allSettings: ISettingRegistry.ISettings
         ): Promise<void> {
