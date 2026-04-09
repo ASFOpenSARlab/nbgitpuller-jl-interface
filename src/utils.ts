@@ -174,7 +174,7 @@ export async function checkForUpdatesAndSetDisplay(
   console.log("UPDATEDISP1");
   // Check for updates
   const repoUpdates = await checkForRepoUpdates(repositories);
-  console.log(`UPDATEDISP2 ${repoUpdates}`);
+  console.log(`UPDATEDISP2 ${JSON.stringify(repoUpdates)}`);
   // Update display
   if (repoUpdates['statuscode'] === 0) {
     const updateCheckResponse = repoUpdates['response'] as {
@@ -196,6 +196,9 @@ export async function checkForUpdatesAndSetDisplay(
     } else {
       tooltip = `${repositories.length} Repos up to date`;
     }
+    console.log(`UPDATEDISP3 ${updateCheckResponse['numToBeUpdated'] +
+        updateCheckResponse['numWithErrors'] ===
+        0}`);
     const updateDisplayResponse = await setUpdateButtonDisplay(
       updateCheckResponse['numToBeUpdated'] +
         updateCheckResponse['numWithErrors'] ===

@@ -34,7 +34,7 @@
       "type": "number",
       "title": "Probe Interval",
       "description": "The interval in ms between probes for repository updates.",
-      "default": 900000
+      "default": 60000
     }
   },
   "additionalProperties": false
