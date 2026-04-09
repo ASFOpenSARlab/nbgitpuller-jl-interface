@@ -7,8 +7,8 @@ import { find } from '@lumino/algorithm';
 import { ISettingRegistry } from '@jupyterlab/settingregistry';
 
 import { ServerConnection } from '@jupyterlab/services';
-
-import { URLExt } from '@jupyterlab/coreutils';
+// import { PageConfig } from '@jupyterlab/coreutils';
+import { PageConfig, URLExt } from '@jupyterlab/coreutils';
 
 const widget_id = 'nbgitpuller-jl-interface-update-btn';
 let intervalID: ReturnType<typeof setInterval>;
@@ -125,12 +125,17 @@ export async function checkForRepoUpdates(
     const destination = repo['destPath'];
 
     // Poll repo for any new commits
+    const baseUrl = PageConfig.getBaseUrl();
+    console.log("TEST PRINT")
+    console.log(baseUrl)
     const settings = ServerConnection.makeSettings();
-    const url = URLExt.join(settings.baseUrl, 'nbgitpuller-jl-interface', 'update-check');
-    // const url =
-    //   window.location.origin +
-    //   baseUrl +
-    //   'nbgitpuller-jl-interface/update-check';
+    const url2 = URLExt.join(settings.baseUrl, 'nbgitpuller-jl-interface', 'update-check');
+    console.log(url2);
+    const url =
+      window.location.origin +
+      baseUrl +
+      'nbgitpuller-jl-interface/update-check';
+    console.log(url)
     const xsrfToken = document.cookie
       .split(';')
       .find(row => row.startsWith('_xsrf='))
