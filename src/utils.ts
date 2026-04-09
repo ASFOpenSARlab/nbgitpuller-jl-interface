@@ -223,7 +223,7 @@ export async function setUpdateButtonDisplay(
   // Create button label html
   let labelHTML;
   if (upToDate) {
-    labelHTML = '<p><span class="success">◉</span> Up to Date</p>';
+    labelHTML = '<p><span class="success">◉</span> Up to Datea</p>';
   } else {
     labelHTML = '<p><span class="failure blink">◉</span> Update Repos</p>';
   }
