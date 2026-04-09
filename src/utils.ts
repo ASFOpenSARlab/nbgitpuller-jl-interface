@@ -179,13 +179,13 @@ export async function checkForUpdatesAndSetDisplay(
       updateCheckResponse['numWithErrors']
     ) {
       if (updateCheckResponse['numToBeUpdated']) {
-        tooltip += `${updateCheckResponse['numToBeUpdated']} awaiting updates\n`;
+        tooltip += `${updateCheckResponse['numToBeUpdated']} notebooks awaiting updates\n`;
       }
       if (updateCheckResponse['numWithErrors']) {
-        tooltip += `${updateCheckResponse['numWithErrors']} repos with errors`;
+        tooltip += `${updateCheckResponse['numWithErrors']} notebooks with errors`;
       }
     } else {
-      tooltip = `${repositories.length} Repos up to date`;
+      tooltip = `${repositories.length} Notebooks up to date`;
     }
 
     const updateDisplayResponse = await setUpdateButtonDisplay(
@@ -217,7 +217,7 @@ export async function setUpdateButtonDisplay(
   if (upToDate) {
     labelHTML = '<p><span class="success">◉</span> Up to Date</p>';
   } else {
-    labelHTML = '<p><span class="failure blink">◉</span> Update Repos</p>';
+    labelHTML = '<p><span class="failure blink">◉</span> Update Notebooks</p>';
   }
 
   function generateWidgetHTML(tooltip: string, labelHTML: string): string {
@@ -240,7 +240,7 @@ export async function setUpdateButtonDisplay(
     // Set updating flag
     currentlyUpdating = true;
     // Update widget to running animation
-    const pendingTooltip = 'Updating Repos...';
+    const pendingTooltip = 'Updating Notebooks...';
     const pendingLabelHTML =
       '<p><span class="lds-dual-ring"></span> Updating</p>';
     widget.innerHTML = generateWidgetHTML(pendingTooltip, pendingLabelHTML);
@@ -253,7 +253,7 @@ export async function setUpdateButtonDisplay(
 
     // Notify users of any failure
     if (failed_updates.length !== 0) {
-      let failure_message = 'Failed to update the following repos: \n';
+      let failure_message = 'Failed to update the following notebooks: \n';
       for (const failure of failed_updates) {
         failure_message += `${failure['repo']}`;
       }
