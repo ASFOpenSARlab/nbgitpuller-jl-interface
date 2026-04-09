@@ -133,14 +133,7 @@ export async function checkForRepoUpdates(
 
     // Poll repo for any new commits
     const baseUrl = PageConfig.getBaseUrl();
-    console.log("TEST PRINT")
     const url = URLExt.join(baseUrl, 'nbgitpuller-jl-interface', 'update-check');
-    console.log(url);
-    // const url =
-    //   window.location.origin +
-    //   baseUrl +
-    //   'nbgitpuller-jl-interface/update-check';
-    // console.log(url)
     const xsrfToken = document.cookie
       .split(';')
       .find(row => row.startsWith('_xsrf='))
@@ -178,9 +171,10 @@ export async function checkForRepoUpdates(
 export async function checkForUpdatesAndSetDisplay(
   repositories: IRepository[]
 ) {
-  console.log("UPDATEDISP1")
+  console.log("UPDATEDISP1");
   // Check for updates
   const repoUpdates = await checkForRepoUpdates(repositories);
+  console.log(`UPDATEDISP2 ${repoUpdates}`);
   // Update display
   if (repoUpdates['statuscode'] === 0) {
     const updateCheckResponse = repoUpdates['response'] as {

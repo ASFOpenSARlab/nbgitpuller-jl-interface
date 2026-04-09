@@ -66,6 +66,7 @@ const plugin: JupyterFrontEndPlugin<void> = {
             .composite as boolean;
         
           if (reloadWidget) {
+            console.log("RELOADING")
             await nbgitpullerUpdateButton(app, allSettings);
             await repoUpdateProbe(allSettings);
             await allSettings.set('reloadWidget', false);
