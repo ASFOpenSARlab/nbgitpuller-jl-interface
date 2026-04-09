@@ -24,6 +24,7 @@ export async function nbgitpullerUpdateButton(
   app: JupyterFrontEnd,
   allSettings: ISettingRegistry.ISettings
 ): Promise<void> {
+  console.log("Grooble1");
   const repositories = allSettings.get('repos')
     .composite as any as IRepository[];
   const rank = allSettings.get('rank').composite as number;
@@ -98,6 +99,7 @@ export async function makeNbgitpullerRequest(
 export async function repoUpdateProbe(
   allSettings: ISettingRegistry.ISettings
 ): Promise<void> {
+  console.log("Grooble2");
   const repositories = allSettings.get('repos')
     .composite as any as IRepository[];
   const probeInterval = allSettings.get('probeInterval').composite as number;
