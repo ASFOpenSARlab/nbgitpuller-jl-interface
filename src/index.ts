@@ -44,8 +44,6 @@ const plugin: JupyterFrontEndPlugin<void> = {
     settingRegistry: ISettingRegistry | null,
     paths: JupyterFrontEnd.IPaths
   ) => {
-    const baseUrl = paths?.urls?.base;
-
     // Wait for the application to be restored and
     // for the settings for this plugin to be loaded
     if (!settingRegistry) {
@@ -62,23 +60,22 @@ const plugin: JupyterFrontEndPlugin<void> = {
         await settings.set('reloadWidget', true);
 
         async function loadSettings(
-          allSettings: ISettingRegistry.ISettings,
-          baseUrl: string
+          allSettings: ISettingRegistry.ISettings
         ): Promise<void> {
           const reloadWidget = allSettings.get('reloadWidget')
             .composite as boolean;
           if (reloadWidget) {
-            await nbgitpullerUpdateButton(app, allSettings, baseUrl);
-            await repoUpdateProbe(allSettings, baseUrl);
+            await nbgitpullerUpdateButton(app, allSettings);
+            await repoUpdateProbe(allSettings);
             await allSettings.set('reloadWidget', false);
           }
         }
 
         // Read the settings
-        loadSettings(settings, baseUrl);
+        loadSettings(settings);
 
         // Listen for your plugin setting changes using Signal
-        settings.changed.connect(settings => loadSettings(settings, baseUrl));
+        settings.changed.connect(loadSettings);
 
         console.log(
           'JupyterLab extension nbgitpuller-jl-interface is fully operational!'
