@@ -46,8 +46,11 @@ export async function nbgitpullerUpdateButton(
   // 1-899 left justified, 900+ right justified
   app.shell.add(updateReposBtn, 'top', { rank: rank });
 
+  // Wait one second for initial creation timing
+  await new Promise(f => setTimeout(f, 1000));
+
   // Check for updates
-  checkForUpdatesAndSetDisplay(repositories);
+  await checkForUpdatesAndSetDisplay(repositories);
 
   console.log('nbgitpuller-jl-interface settings loaded');
 }
@@ -111,7 +114,7 @@ export async function repoUpdateProbe(
   console.log("Flim3");
   // Create interval
   intervalID = setInterval(async () => {
-    checkForUpdatesAndSetDisplay(repositories);
+    await checkForUpdatesAndSetDisplay(repositories);
   }, probeInterval);
   console.log("Flim4");
 }
@@ -260,7 +263,7 @@ export async function setUpdateButtonDisplay(
     const failed_updates = await makeNbgitpullerRequest(repositories);
 
     // Update widget to all updated or pending updates
-    checkForUpdatesAndSetDisplay(repositories);
+    await checkForUpdatesAndSetDisplay(repositories);
 
     // Notify users of any failure
     if (failed_updates.length !== 0) {
