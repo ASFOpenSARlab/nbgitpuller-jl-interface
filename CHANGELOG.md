@@ -2,6 +2,25 @@
 
 <!-- <START NEW CHANGELOG ENTRY> -->
 
+## 0.3.0
+
+([Full Changelog](https://github.com/ASFOpenSARlab/nbgitpuller-jl-interface/compare/v0.2.5...eab8732c960fecc43d3cda8560330cc3b692a5bf))
+
+### Bugs fixed
+
+- Make compatable with jupyterhub environment [#4](https://github.com/ASFOpenSARlab/nbgitpuller-jl-interface/pull/4) ([@segallagher](https://github.com/segallagher), [@dgpalmieri](https://github.com/dgpalmieri))
+
+### Contributors to this release
+
+The following people contributed discussions, new ideas, code and documentation contributions, and review.
+See [our definition of contributors](https://github-activity.readthedocs.io/en/latest/use/#how-does-this-tool-define-contributions-in-the-reports).
+
+([GitHub contributors page for this release](https://github.com/ASFOpenSARlab/nbgitpuller-jl-interface/graphs/contributors?from=2026-04-09&to=2026-04-10&type=c))
+
+@dgpalmieri ([activity](https://github.com/search?q=repo%3AASFOpenSARlab%2Fnbgitpuller-jl-interface+involves%3Adgpalmieri+updated%3A2026-04-09..2026-04-10&type=Issues)) | @segallagher ([activity](https://github.com/search?q=repo%3AASFOpenSARlab%2Fnbgitpuller-jl-interface+involves%3Asegallagher+updated%3A2026-04-09..2026-04-10&type=Issues))
+
+<!-- <END NEW CHANGELOG ENTRY> -->
+
 ## 0.2.5
 
 ([Full Changelog](https://github.com/ASFOpenSARlab/nbgitpuller-jl-interface/compare/v0.2.4...acb905136fd3b05e07da5e1c3da4ee88bec7aba9))
@@ -18,8 +37,6 @@ See [our definition of contributors](https://github-activity.readthedocs.io/en/l
 ([GitHub contributors page for this release](https://github.com/ASFOpenSARlab/nbgitpuller-jl-interface/graphs/contributors?from=2026-04-07&to=2026-04-09&type=c))
 
 @emlundell ([activity](https://github.com/search?q=repo%3AASFOpenSARlab%2Fnbgitpuller-jl-interface+involves%3Aemlundell+updated%3A2026-04-07..2026-04-09&type=Issues)) | @segallagher ([activity](https://github.com/search?q=repo%3AASFOpenSARlab%2Fnbgitpuller-jl-interface+involves%3Asegallagher+updated%3A2026-04-07..2026-04-09&type=Issues))
-
-<!-- <END NEW CHANGELOG ENTRY> -->
 
 ## 0.2.4
 
