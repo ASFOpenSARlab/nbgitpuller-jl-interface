@@ -1,7 +1,5 @@
 import { JupyterFrontEnd } from '@jupyterlab/application';
 
-// import { ToolbarButton } from '@jupyterlab/apputils';
-
 import { find } from '@lumino/algorithm';
 
 import { Widget } from '@lumino/widgets';
@@ -33,15 +31,6 @@ export async function nbgitpullerUpdateButton(
   if (widget) {
     widget.dispose();
   }
-
-  // Create widget
-  // const updateReposBtn = new ToolbarButton({
-  //   className: 'nbgitpuller-jl-interface-update-btn',
-  //   label: '◉ Initializing',
-  //   tooltip: 'Initializing nbgitpuller'
-  // });
-  // updateReposBtn.id = widget_id;
-  // updateReposBtn.addClass('nbgitpuller-jl-interface-wrapper');
 
   const newWidget = new Widget();
   newWidget.id = widget_id;
