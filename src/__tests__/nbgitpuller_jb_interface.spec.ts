@@ -10,7 +10,11 @@ import {
   it
 } from '@jest/globals';
 
-import { checkForRepoUpdates, setUpdateButtonDisplay, WidgetState } from '../utils';
+import {
+  checkForRepoUpdates,
+  setUpdateButtonDisplay,
+  WidgetState
+} from '../utils';
 
 describe('nbgitpuller-jl-interface utils checkForRepoUpdates', () => {
   beforeEach(() => {});
@@ -150,7 +154,10 @@ describe('nbgitpuller-jl-interface utils setUpdateButtonDisplay', () => {
     widget.id = 'nbgitpuller-jl-interface-update-btn';
     document.body.appendChild(widget);
 
-    const returnValue = await setUpdateButtonDisplay(WidgetState.UpdateRequired, '');
+    const returnValue = await setUpdateButtonDisplay(
+      WidgetState.UpdateRequired,
+      ''
+    );
 
     expect(returnValue).toStrictEqual({ error: '', returncode: 0 });
     expect(widget.innerHTML).toContain(`<span class="pending blink">◉</span>`);
