@@ -259,15 +259,15 @@ export async function setUpdateButtonDisplay(
 
   // Create button label html
   let labelHTML;
-  if (targetWidgetState == WidgetState.UpToDate) {
+  if (targetWidgetState === WidgetState.UpToDate) {
     labelHTML = '<p><span class="success">◉</span> Up to Date</p>';
-  } else if (targetWidgetState == WidgetState.Updating) {
+  } else if (targetWidgetState === WidgetState.Updating) {
     labelHTML = '<p><span class="lds-dual-ring"></span> Updating</p>';
-  } else if (targetWidgetState == WidgetState.UpdateRequired) {
+  } else if (targetWidgetState === WidgetState.UpdateRequired) {
     labelHTML = '<p><span class="pending blink">◉</span> Update Notebooks</p>';
-  } else if (targetWidgetState == WidgetState.Error) {
+  } else if (targetWidgetState === WidgetState.Error) {
     labelHTML = '<p><span class="failure blink">◉</span> Update Error</p>';
-  } else if (targetWidgetState == WidgetState.Initializing) {
+  } else if (targetWidgetState === WidgetState.Initializing) {
     labelHTML = '<p><span class="">◉</span> Initializing</p>';
   } else {
     return { error: 'Unknown widget state', returncode: 2 };
