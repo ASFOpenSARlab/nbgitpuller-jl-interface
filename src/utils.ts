@@ -45,9 +45,9 @@ export async function nbgitpullerUpdateButton(
 
   const newWidget = new Widget();
   newWidget.id = widget_id;
-  newWidget.addClass("lm-Widget");
-  newWidget.addClass("jp-ToolbarButton");
-  newWidget.addClass("nbgitpuller-jl-interface-wrapper");
+  newWidget.addClass('lm-Widget');
+  newWidget.addClass('jp-ToolbarButton');
+  newWidget.addClass('nbgitpuller-jl-interface-wrapper');
   newWidget.node.addEventListener('click', async () => {
     // Throttle updating
     if (currentlyUpdating) {
@@ -218,22 +218,20 @@ export async function checkForUpdatesAndSetDisplay(
     // Generate tooltip
     let tooltip;
     let widgetState;
-    if (updateCheckResponse['numWithErrors'] > 0){
+    if (updateCheckResponse['numWithErrors'] > 0) {
       tooltip = `${updateCheckResponse['numWithErrors']} notebooks with errors`;
       widgetState = WidgetState.Error;
-
-    }else if(updateCheckResponse['numToBeUpdated'] > 0){
+    } else if (updateCheckResponse['numToBeUpdated'] > 0) {
       tooltip = `${updateCheckResponse['numToBeUpdated']} notebooks awaiting updates\n`;
       widgetState = WidgetState.UpdateRequired;
-
-    }else {
+    } else {
       tooltip = `${repositories.length} Notebooks up to date`;
       widgetState = WidgetState.UpToDate;
     }
 
     const updateDisplayResponse = await setUpdateButtonDisplay(
       widgetState,
-      tooltip,
+      tooltip
     );
     if (updateDisplayResponse.returncode !== 0) {
       console.error(updateDisplayResponse);
@@ -246,12 +244,12 @@ enum WidgetState {
   UpdateRequired,
   Updating,
   Error,
-  Initializing,
+  Initializing
 }
 
 export async function setUpdateButtonDisplay(
   targetWidgetState: WidgetState,
-  tooltip: string,
+  tooltip: string
 ): Promise<{ error: string; returncode: number }> {
   // Get widget
   const widget: HTMLElement | null = document.getElementById(widget_id);
@@ -261,23 +259,18 @@ export async function setUpdateButtonDisplay(
 
   // Create button label html
   let labelHTML;
-  if(targetWidgetState == WidgetState.UpToDate){
+  if (targetWidgetState == WidgetState.UpToDate) {
     labelHTML = '<p><span class="success">◉</span> Up to Date</p>';
-
-  }else if (targetWidgetState == WidgetState.Updating){
+  } else if (targetWidgetState == WidgetState.Updating) {
     labelHTML = '<p><span class="lds-dual-ring"></span> Updating</p>';
-
-  }else if (targetWidgetState == WidgetState.UpdateRequired){
+  } else if (targetWidgetState == WidgetState.UpdateRequired) {
     labelHTML = '<p><span class="pending blink">◉</span> Update Notebooks</p>';
-
-  }else if (targetWidgetState == WidgetState.Error){
+  } else if (targetWidgetState == WidgetState.Error) {
     labelHTML = '<p><span class="failure blink">◉</span> Update Error</p>';
-
-  }else if (targetWidgetState == WidgetState.Initializing){
+  } else if (targetWidgetState == WidgetState.Initializing) {
     labelHTML = '<p><span class="">◉</span> Initializing</p>';
-
-  }else{
-    return { error: "Unknown widget state", returncode: 2 };
+  } else {
+    return { error: 'Unknown widget state', returncode: 2 };
   }
 
   function generateWidgetHTML(labelHTML: string): string {
