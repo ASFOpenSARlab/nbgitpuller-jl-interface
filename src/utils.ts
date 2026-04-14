@@ -268,7 +268,7 @@ export async function setUpdateButtonDisplay(
     labelHTML = '<p><span class="lds-dual-ring"></span> Updating</p>';
 
   }else if (targetWidgetState == WidgetState.UpdateRequired){
-    labelHTML = '<p><span class="pending blink">◉</span> Update Error</p>';
+    labelHTML = '<p><span class="pending blink">◉</span> Update Notebooks</p>';
 
   }else if (targetWidgetState == WidgetState.Error){
     labelHTML = '<p><span class="failure blink">◉</span> Update Error</p>';
