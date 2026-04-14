@@ -239,7 +239,7 @@ export async function checkForUpdatesAndSetDisplay(
   }
 }
 
-enum WidgetState {
+export enum WidgetState {
   UpToDate,
   UpdateRequired,
   Updating,
