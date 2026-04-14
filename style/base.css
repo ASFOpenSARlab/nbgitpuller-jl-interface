@@ -32,6 +32,10 @@ jp-button.nbgitpuller-jl-interface-update-btn {
   color: #5cb85c;
 }
 
+.pending {
+  color: #f29339;
+}
+
 .failure {
   color: #d63124;
 }

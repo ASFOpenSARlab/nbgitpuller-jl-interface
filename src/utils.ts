@@ -1,8 +1,10 @@
 import { JupyterFrontEnd } from '@jupyterlab/application';
 
-import { ToolbarButton } from '@jupyterlab/apputils';
+// import { ToolbarButton } from '@jupyterlab/apputils';
 
 import { find } from '@lumino/algorithm';
+
+import { Widget } from '@lumino/widgets';
 
 import { ISettingRegistry } from '@jupyterlab/settingregistry';
 
@@ -33,15 +35,53 @@ export async function nbgitpullerUpdateButton(
   }
 
   // Create widget
-  const updateReposBtn = new ToolbarButton({
-    className: 'nbgitpuller-jl-interface-update-btn',
-    label: '◉ Initializing',
-    tooltip: 'Initializing nbgitpuller'
+  // const updateReposBtn = new ToolbarButton({
+  //   className: 'nbgitpuller-jl-interface-update-btn',
+  //   label: '◉ Initializing',
+  //   tooltip: 'Initializing nbgitpuller'
+  // });
+  // updateReposBtn.id = widget_id;
+  // updateReposBtn.addClass('nbgitpuller-jl-interface-wrapper');
+
+  const newWidget = new Widget();
+  newWidget.id = widget_id;
+  newWidget.addClass("lm-Widget");
+  newWidget.addClass("jp-ToolbarButton");
+  newWidget.addClass("nbgitpuller-jl-interface-wrapper");
+  newWidget.node.addEventListener('click', async () => {
+    // Throttle updating
+    if (currentlyUpdating) {
+      return;
+    }
+    // Set updating flag
+    currentlyUpdating = true;
+
+    // Update widget to running animation
+    const pendingTooltip = 'Updating Notebooks...';
+    await setUpdateButtonDisplay(WidgetState.Updating, pendingTooltip);
+
+    // Pull each repository
+    const failed_updates = await makeNbgitpullerRequest(repositories);
+
+    // Update widget to all updated or pending updates
+    await checkForUpdatesAndSetDisplay(repositories);
+
+    // Notify users of any failure
+    if (failed_updates.length !== 0) {
+      let failure_message = 'Failed to update the following notebooks: \n';
+      for (const failure of failed_updates) {
+        failure_message += `${failure['repo']}`;
+      }
+      console.log(failure_message);
+      alert(failure_message);
+    }
+
+    // Unset updating flag
+    currentlyUpdating = false;
   });
-  updateReposBtn.id = widget_id;
-  updateReposBtn.addClass('nbgitpuller-jl-interface-wrapper');
+
   // 1-899 left justified, 900+ right justified
-  app.shell.add(updateReposBtn, 'top', { rank: rank });
+  app.shell.add(newWidget, 'top', { rank: rank });
 
   // Wait one second for initial creation timing
   await new Promise(f => setTimeout(f, 1000));
@@ -174,28 +214,26 @@ export async function checkForUpdatesAndSetDisplay(
       numToBeUpdated: number;
       numWithErrors: number;
     };
+
     // Generate tooltip
-    let tooltip = '';
-    if (
-      updateCheckResponse['numToBeUpdated'] +
-      updateCheckResponse['numWithErrors']
-    ) {
-      if (updateCheckResponse['numToBeUpdated']) {
-        tooltip += `${updateCheckResponse['numToBeUpdated']} notebooks awaiting updates\n`;
-      }
-      if (updateCheckResponse['numWithErrors']) {
-        tooltip += `${updateCheckResponse['numWithErrors']} notebooks with errors`;
-      }
-    } else {
+    let tooltip;
+    let widgetState;
+    if (updateCheckResponse['numWithErrors'] > 0){
+      tooltip = `${updateCheckResponse['numWithErrors']} notebooks with errors`;
+      widgetState = WidgetState.Error;
+
+    }else if(updateCheckResponse['numToBeUpdated'] > 0){
+      tooltip = `${updateCheckResponse['numToBeUpdated']} notebooks awaiting updates\n`;
+      widgetState = WidgetState.UpdateRequired;
+
+    }else {
       tooltip = `${repositories.length} Notebooks up to date`;
+      widgetState = WidgetState.UpToDate;
     }
 
     const updateDisplayResponse = await setUpdateButtonDisplay(
-      updateCheckResponse['numToBeUpdated'] +
-        updateCheckResponse['numWithErrors'] ===
-        0,
+      widgetState,
       tooltip,
-      repositories
     );
     if (updateDisplayResponse.returncode !== 0) {
       console.error(updateDisplayResponse);
@@ -203,10 +241,17 @@ export async function checkForUpdatesAndSetDisplay(
   }
 }
 
+enum WidgetState {
+  UpToDate,
+  UpdateRequired,
+  Updating,
+  Error,
+  Initializing,
+}
+
 export async function setUpdateButtonDisplay(
-  upToDate: boolean,
+  targetWidgetState: WidgetState,
   tooltip: string,
-  repositories: IRepository[]
 ): Promise<{ error: string; returncode: number }> {
   // Get widget
   const widget: HTMLElement | null = document.getElementById(widget_id);
@@ -216,56 +261,35 @@ export async function setUpdateButtonDisplay(
 
   // Create button label html
   let labelHTML;
-  if (upToDate) {
+  if(targetWidgetState == WidgetState.UpToDate){
     labelHTML = '<p><span class="success">◉</span> Up to Date</p>';
-  } else {
-    labelHTML = '<p><span class="failure blink">◉</span> Update Notebooks</p>';
+
+  }else if (targetWidgetState == WidgetState.Updating){
+    labelHTML = '<p><span class="lds-dual-ring"></span> Updating</p>';
+
+  }else if (targetWidgetState == WidgetState.UpdateRequired){
+    labelHTML = '<p><span class="pending blink">◉</span> Update Error</p>';
+
+  }else if (targetWidgetState == WidgetState.Error){
+    labelHTML = '<p><span class="failure blink">◉</span> Update Error</p>';
+
+  }else if (targetWidgetState == WidgetState.Initializing){
+    labelHTML = '<p><span class="">◉</span> Initializing</p>';
+
+  }else{
+    return { error: "Unknown widget state", returncode: 2 };
   }
 
-  function generateWidgetHTML(tooltip: string, labelHTML: string): string {
+  function generateWidgetHTML(labelHTML: string): string {
     return `
-    <div class="lm-Widget jp-ToolbarButton nbgitpuller-jl-interface-wrapper"
-         title="${tooltip}">
       <jp-button class="nbgitpuller-jl-interface-update-btn jp-ToolbarButtonComponent">
         ${labelHTML}
-      </jp-button>
-    </div>`;
+      </jp-button>`;
   }
 
   // Update widget functionality
-  widget.innerHTML = generateWidgetHTML(tooltip, labelHTML);
-  widget.addEventListener('click', async () => {
-    // Throttle updating
-    if (currentlyUpdating) {
-      return;
-    }
-    // Set updating flag
-    currentlyUpdating = true;
-    // Update widget to running animation
-    const pendingTooltip = 'Updating Notebooks...';
-    const pendingLabelHTML =
-      '<p><span class="lds-dual-ring"></span> Updating</p>';
-    widget.innerHTML = generateWidgetHTML(pendingTooltip, pendingLabelHTML);
-
-    // Pull each repository
-    const failed_updates = await makeNbgitpullerRequest(repositories);
-
-    // Update widget to all updated or pending updates
-    await checkForUpdatesAndSetDisplay(repositories);
-
-    // Notify users of any failure
-    if (failed_updates.length !== 0) {
-      let failure_message = 'Failed to update the following notebooks: \n';
-      for (const failure of failed_updates) {
-        failure_message += `${failure['repo']}`;
-      }
-      console.log(failure_message);
-      alert(failure_message);
-    }
-
-    // Unset updating flag
-    currentlyUpdating = false;
-  });
+  widget.title = tooltip;
+  widget.innerHTML = generateWidgetHTML(labelHTML);
 
   return { error: '', returncode: 0 };
 }
