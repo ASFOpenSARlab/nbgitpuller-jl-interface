@@ -10,7 +10,11 @@ import {
   it
 } from '@jest/globals';
 
-import { checkForRepoUpdates, setUpdateButtonDisplay } from '../utils';
+import {
+  checkForRepoUpdates,
+  setUpdateButtonDisplay,
+  WidgetState
+} from '../utils';
 
 describe('nbgitpuller-jl-interface utils checkForRepoUpdates', () => {
   beforeEach(() => {});
@@ -134,36 +138,44 @@ describe('nbgitpuller-jl-interface utils setUpdateButtonDisplay', () => {
     document.body.innerHTML = '';
   });
 
-  it('widget up to date populated', async () => {
+  it('widget up to date success', async () => {
     const widget = await document.createElement('div');
     widget.id = 'nbgitpuller-jl-interface-update-btn';
     document.body.appendChild(widget);
 
-    const returnValue = await setUpdateButtonDisplay(true, '', [
-      { repoUrl: 'https://fakerepo.com', branch: 'main', destPath: 'mypath' }
-    ]);
+    const returnValue = await setUpdateButtonDisplay(WidgetState.UpToDate, '');
 
     expect(returnValue).toStrictEqual({ error: '', returncode: 0 });
     expect(widget.innerHTML).toContain(`<span class="success">◉</span>`);
   });
 
-  it('widget update needed populated', async () => {
+  it('widget update required', async () => {
     const widget = await document.createElement('div');
     widget.id = 'nbgitpuller-jl-interface-update-btn';
     document.body.appendChild(widget);
 
-    const returnValue = await setUpdateButtonDisplay(false, '', [
-      { repoUrl: 'https://fakerepo.com', branch: 'main', destPath: 'mypath' }
-    ]);
+    const returnValue = await setUpdateButtonDisplay(
+      WidgetState.UpdateRequired,
+      ''
+    );
+
+    expect(returnValue).toStrictEqual({ error: '', returncode: 0 });
+    expect(widget.innerHTML).toContain(`<span class="pending blink">◉</span>`);
+  });
+
+  it('widget error', async () => {
+    const widget = await document.createElement('div');
+    widget.id = 'nbgitpuller-jl-interface-update-btn';
+    document.body.appendChild(widget);
+
+    const returnValue = await setUpdateButtonDisplay(WidgetState.Error, '');
 
     expect(returnValue).toStrictEqual({ error: '', returncode: 0 });
     expect(widget.innerHTML).toContain(`<span class="failure blink">◉</span>`);
   });
 
   it('widget not found', async () => {
-    const returnValue = await setUpdateButtonDisplay(false, '', [
-      { repoUrl: 'https://fakerepo.com', branch: 'main', destPath: 'mypath' }
-    ]);
+    const returnValue = await setUpdateButtonDisplay(WidgetState.Error, '');
 
     expect(returnValue).toStrictEqual({
       error: 'Unable to find nbgitpuller widget',
