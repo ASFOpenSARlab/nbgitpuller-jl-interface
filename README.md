@@ -45,6 +45,14 @@ the frontend extension, check the frontend extension is installed:
 jupyter labextension list
 ```
 
+If `git` is asking for credentials on the command line when deployed locally
+(you may have mistyped your url!), add the following lines to `~/.gitconfig`:
+
+```bash
+[credential "https://github.com"]
+    helper = !/usr/bin/gh auth git-credential
+```
+
 ## Contributing
 
 ### Development install
