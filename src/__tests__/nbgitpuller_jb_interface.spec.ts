@@ -149,6 +149,34 @@ describe('nbgitpuller-jl-interface utils setUpdateButtonDisplay', () => {
     expect(widget.innerHTML).toContain(`<span class="success">◉</span>`);
   });
 
+  it('widget updating', async () => {
+    const widget = await document.createElement('div');
+    widget.id = 'nbgitpuller-jl-interface-update-btn';
+    document.body.appendChild(widget);
+
+    const returnValue = await setUpdateButtonDisplay(
+      WidgetState.Updating,
+      ''
+    );
+
+    expect(returnValue).toStrictEqual({ error: '', returncode: 0 });
+    expect(widget.innerHTML).toContain(`<span class="lds-dual-ring"></span>`);
+  });
+
+  it('widget initializing', async () => {
+    const widget = await document.createElement('div');
+    widget.id = 'nbgitpuller-jl-interface-update-btn';
+    document.body.appendChild(widget);
+
+    const returnValue = await setUpdateButtonDisplay(
+      WidgetState.Initializing,
+      ''
+    );
+
+    expect(returnValue).toStrictEqual({ error: '', returncode: 0 });
+    expect(widget.innerHTML).toContain(`<p><span class="">◉</span>`);
+  });
+
   it('widget update required', async () => {
     const widget = await document.createElement('div');
     widget.id = 'nbgitpuller-jl-interface-update-btn';
