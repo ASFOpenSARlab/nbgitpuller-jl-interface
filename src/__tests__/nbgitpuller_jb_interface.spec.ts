@@ -154,10 +154,7 @@ describe('nbgitpuller-jl-interface utils setUpdateButtonDisplay', () => {
     widget.id = 'nbgitpuller-jl-interface-update-btn';
     document.body.appendChild(widget);
 
-    const returnValue = await setUpdateButtonDisplay(
-      WidgetState.Updating,
-      ''
-    );
+    const returnValue = await setUpdateButtonDisplay(WidgetState.Updating, '');
 
     expect(returnValue).toStrictEqual({ error: '', returncode: 0 });
     expect(widget.innerHTML).toContain(`<span class="lds-dual-ring"></span>`);
