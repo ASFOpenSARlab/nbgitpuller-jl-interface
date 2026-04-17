@@ -253,7 +253,8 @@ export async function setUpdateButtonDisplay(
   } else if (targetWidgetState === WidgetState.Updating) {
     labelHTML = '<p><span class="lds-dual-ring"></span> Updating</p>';
   } else if (targetWidgetState === WidgetState.UpdateRequired) {
-    labelHTML = '<p><span class="pending blink">◉</span> Update Repositories</p>';
+    labelHTML =
+      '<p><span class="pending blink">◉</span> Update Repositories</p>';
   } else if (targetWidgetState === WidgetState.Error) {
     labelHTML = '<p><span class="failure blink">◉</span> Update Error</p>';
   } else if (targetWidgetState === WidgetState.Initializing) {
