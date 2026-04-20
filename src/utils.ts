@@ -46,7 +46,7 @@ export async function nbgitpullerUpdateButton(
     currentlyUpdating = true;
 
     // Update widget to running animation
-    const pendingTooltip = 'Updating Repositories...';
+    const pendingTooltip = 'Updating GitHub Repositories...';
     await setUpdateButtonDisplay(WidgetState.Updating, pendingTooltip);
 
     // Pull each repository
