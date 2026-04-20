@@ -65,7 +65,7 @@ class GitDetectUpdateHandler(APIHandler):
             "returncode": 42,
         }
         
-        ret = checkIfRepoExists(repository_url)
+        ret = checkIfRepoExists(repository_url, repository_branch)
         result.update(ret)
         # Exit early if error found
         if result["returncode"] != 0:

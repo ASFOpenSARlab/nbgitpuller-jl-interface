@@ -61,16 +61,28 @@ def pullRepo(repository_url: str, repository_branch: str, destination: str) -> d
         "returncode": result.returncode
     }
 
-def checkIfRepoExists(repository_url) -> dict[str, Any]:
+def checkIfRepoExists(repository_url: str, branch: str) -> dict[str, Any]:
     # Get git command
     command = which("git")
     
     if command is None:
         error = "git not found"
         return {"repoexists": False, "error": error, "returncode": 1}
-    # Fetch repo contents
+    # Check remote exists
     result = subprocess.run(
         [command, "ls-remote", repository_url],
+        capture_output=True,
+        text=True
+    )
+    if result.returncode != 0:
+        return {
+            "repoexists": result.stdout != "",
+            "error": result.stderr,
+            "returncode": result.returncode
+        }
+    # Check branch exists on remote
+    result = subprocess.run(
+        [command, "ls-remote", "--heads", repository_url, f"refs/heads/{branch}"],
         capture_output=True,
         text=True
     )
