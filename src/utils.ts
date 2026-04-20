@@ -46,7 +46,7 @@ export async function nbgitpullerUpdateButton(
     currentlyUpdating = true;
 
     // Update widget to running animation
-    const pendingTooltip = 'Updating Notebooks...';
+    const pendingTooltip = 'Updating GitHub Repositories...';
     await setUpdateButtonDisplay(WidgetState.Updating, pendingTooltip);
 
     // Pull each repository
@@ -57,7 +57,7 @@ export async function nbgitpullerUpdateButton(
 
     // Notify users of any failure
     if (failed_updates.length !== 0) {
-      let failure_message = 'Failed to update the following notebooks: \n';
+      let failure_message = 'Failed to update the following repositories: \n';
       for (const failure of failed_updates) {
         failure_message += `${failure['repo']}`;
       }
@@ -208,13 +208,13 @@ export async function checkForUpdatesAndSetDisplay(
     let tooltip;
     let widgetState;
     if (updateCheckResponse['numWithErrors'] > 0) {
-      tooltip = `${updateCheckResponse['numWithErrors']} notebooks with errors`;
+      tooltip = `${updateCheckResponse['numWithErrors']} repositories with errors`;
       widgetState = WidgetState.Error;
     } else if (updateCheckResponse['numToBeUpdated'] > 0) {
-      tooltip = `${updateCheckResponse['numToBeUpdated']} notebooks awaiting updates\n`;
+      tooltip = `${updateCheckResponse['numToBeUpdated']} repositories awaiting updates\n`;
       widgetState = WidgetState.UpdateRequired;
     } else {
-      tooltip = `${repositories.length} Notebooks up to date`;
+      tooltip = `${repositories.length} repositories up to date`;
       widgetState = WidgetState.UpToDate;
     }
 
@@ -253,7 +253,8 @@ export async function setUpdateButtonDisplay(
   } else if (targetWidgetState === WidgetState.Updating) {
     labelHTML = '<p><span class="lds-dual-ring"></span> Updating</p>';
   } else if (targetWidgetState === WidgetState.UpdateRequired) {
-    labelHTML = '<p><span class="pending blink">◉</span> Update Notebooks</p>';
+    labelHTML =
+      '<p><span class="pending blink">◉</span> Update Repositories</p>';
   } else if (targetWidgetState === WidgetState.Error) {
     labelHTML = '<p><span class="failure blink">◉</span> Update Error</p>';
   } else if (targetWidgetState === WidgetState.Initializing) {
