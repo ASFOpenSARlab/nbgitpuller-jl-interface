@@ -59,8 +59,9 @@ export async function nbgitpullerUpdateButton(
     if (failed_updates.length !== 0) {
       let failure_message = 'Failed to update the following repositories: \n';
       for (const failure of failed_updates) {
-        failure_message += `${failure['repo']}`;
+        failure_message += `- ${failure['repo']}\n`;
       }
+      failure_message += "If you require assistance with resolving this issue, please contact the OSL admins at 'uaf-jupyterhub-asf@alaska.edu'";
       console.log(failure_message);
       alert(failure_message);
     }
