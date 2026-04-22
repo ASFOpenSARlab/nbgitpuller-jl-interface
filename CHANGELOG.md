@@ -2,6 +2,31 @@
 
 <!-- <START NEW CHANGELOG ENTRY> -->
 
+## 1.0.0
+
+([Full Changelog](https://github.com/ASFOpenSARlab/nbgitpuller-jl-interface/compare/v0.4.0...759fb6102164f8863a7b43141b34c915d43fe5bd))
+
+### Enhancements made
+
+- [OSL-4409] fix: improve formatting of error message [#9](https://github.com/ASFOpenSARlab/nbgitpuller-jl-interface/pull/9) ([@dgpalmieri](https://github.com/dgpalmieri), [@Alex-Lewandowski](https://github.com/Alex-Lewandowski), [@emlundell](https://github.com/emlundell))
+- add additional check for if branch is valid [#7](https://github.com/ASFOpenSARlab/nbgitpuller-jl-interface/pull/7) ([@segallagher](https://github.com/segallagher), [@emlundell](https://github.com/emlundell))
+
+### Documentation improvements
+
+- refactor: reword notebooks to repositories [#8](https://github.com/ASFOpenSARlab/nbgitpuller-jl-interface/pull/8) ([@segallagher](https://github.com/segallagher), [@dgpalmieri](https://github.com/dgpalmieri), [@emlundell](https://github.com/emlundell))
+- docs: add note about git cred prompting to readme [#6](https://github.com/ASFOpenSARlab/nbgitpuller-jl-interface/pull/6) ([@dgpalmieri](https://github.com/dgpalmieri), [@segallagher](https://github.com/segallagher))
+
+### Contributors to this release
+
+The following people contributed discussions, new ideas, code and documentation contributions, and review.
+See [our definition of contributors](https://github-activity.readthedocs.io/en/latest/use/#how-does-this-tool-define-contributions-in-the-reports).
+
+([GitHub contributors page for this release](https://github.com/ASFOpenSARlab/nbgitpuller-jl-interface/graphs/contributors?from=2026-04-15&to=2026-04-22&type=c))
+
+@Alex-Lewandowski ([activity](https://github.com/search?q=repo%3AASFOpenSARlab%2Fnbgitpuller-jl-interface+involves%3AAlex-Lewandowski+updated%3A2026-04-15..2026-04-22&type=Issues)) | @dgpalmieri ([activity](https://github.com/search?q=repo%3AASFOpenSARlab%2Fnbgitpuller-jl-interface+involves%3Adgpalmieri+updated%3A2026-04-15..2026-04-22&type=Issues)) | @emlundell ([activity](https://github.com/search?q=repo%3AASFOpenSARlab%2Fnbgitpuller-jl-interface+involves%3Aemlundell+updated%3A2026-04-15..2026-04-22&type=Issues)) | @segallagher ([activity](https://github.com/search?q=repo%3AASFOpenSARlab%2Fnbgitpuller-jl-interface+involves%3Asegallagher+updated%3A2026-04-15..2026-04-22&type=Issues))
+
+<!-- <END NEW CHANGELOG ENTRY> -->
+
 ## 0.4.0
 
 ([Full Changelog](https://github.com/ASFOpenSARlab/nbgitpuller-jl-interface/compare/v0.3.0...c0858bae9a3c63097a47872caeb0332071433e10))
@@ -18,8 +43,6 @@ See [our definition of contributors](https://github-activity.readthedocs.io/en/l
 ([GitHub contributors page for this release](https://github.com/ASFOpenSARlab/nbgitpuller-jl-interface/graphs/contributors?from=2026-04-10&to=2026-04-15&type=c))
 
 @bbuechler ([activity](https://github.com/search?q=repo%3AASFOpenSARlab%2Fnbgitpuller-jl-interface+involves%3Abbuechler+updated%3A2026-04-10..2026-04-15&type=Issues)) | @dgpalmieri ([activity](https://github.com/search?q=repo%3AASFOpenSARlab%2Fnbgitpuller-jl-interface+involves%3Adgpalmieri+updated%3A2026-04-10..2026-04-15&type=Issues)) | @segallagher ([activity](https://github.com/search?q=repo%3AASFOpenSARlab%2Fnbgitpuller-jl-interface+involves%3Asegallagher+updated%3A2026-04-10..2026-04-15&type=Issues))
-
-<!-- <END NEW CHANGELOG ENTRY> -->
 
 ## 0.3.0
 
