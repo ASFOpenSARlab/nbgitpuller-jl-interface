@@ -61,7 +61,7 @@ export async function nbgitpullerUpdateButton(
       for (const failure of failed_updates) {
         failure_message += `- ${failure['repo']}\n`;
       }
-      failure_message += "If you require assistance with resolving this issue, please contact the OSL admins at 'uaf-jupyterhub-asf@alaska.edu'";
+      failure_message += "If you require assistance with resolving this issue, please contact your platform administrators";
       console.log(failure_message);
       alert(failure_message);
     }
