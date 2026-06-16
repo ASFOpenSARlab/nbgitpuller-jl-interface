@@ -4,11 +4,7 @@ import {
   JupyterFrontEndPlugin
 } from '@jupyterlab/application';
 
-import {
-    nbgitpullerUpdateButton,
-    repoUpdateProbe,
-    widget_id
-} from './utils';
+import { nbgitpullerUpdateButton, repoUpdateProbe, widget_id } from './utils';
 
 import { ISettingRegistry } from '@jupyterlab/settingregistry';
 
@@ -79,16 +75,17 @@ const plugin: JupyterFrontEndPlugin<void> = {
         const autoUpdateWidget = settings.get('autoUpdateWidget')
           .composite as boolean;
 
-        if(autoUpdateWidget) {
-            console.log("Pulling repos on auto update");
-            const clickIntervalID = setInterval(() => {
-                const widget: HTMLElement | null = document.getElementById(widget_id);
-                console.log(widget)
-                if ( widget ) {
-                    widget.click()
-                    clearInterval(clickIntervalID)
-                }
-            }, 1000);
+        if (autoUpdateWidget) {
+          console.log('Pulling repos on auto update');
+          const clickIntervalID = setInterval(() => {
+            const widget: HTMLElement | null =
+              document.getElementById(widget_id);
+            console.log(widget);
+            if (widget) {
+              widget.click();
+              clearInterval(clickIntervalID);
+            }
+          }, 1000);
         }
 
         // Read the settings

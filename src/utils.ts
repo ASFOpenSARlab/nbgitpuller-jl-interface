@@ -19,23 +19,23 @@ export interface IRepository {
 }
 
 export async function pullRepos(repositories: IRepository[]): Promise<void> {
-    // Pull each repository
-    const failed_updates = await makeNbgitpullerRequest(repositories);
+  // Pull each repository
+  const failed_updates = await makeNbgitpullerRequest(repositories);
 
-    // Update widget to all updated or pending updates
-    await checkForUpdatesAndSetDisplay(repositories);
+  // Update widget to all updated or pending updates
+  await checkForUpdatesAndSetDisplay(repositories);
 
-    // Notify users of any failure
-    if (failed_updates.length !== 0) {
-      let failure_message = 'Failed to update the following repositories: \n';
-      for (const failure of failed_updates) {
-        failure_message += `- ${failure['repo']}\n`;
-      }
-      failure_message +=
-        'If you require assistance with resolving this issue, please contact your platform administrators.';
-      console.log(failure_message);
-      alert(failure_message);
+  // Notify users of any failure
+  if (failed_updates.length !== 0) {
+    let failure_message = 'Failed to update the following repositories: \n';
+    for (const failure of failed_updates) {
+      failure_message += `- ${failure['repo']}\n`;
     }
+    failure_message +=
+      'If you require assistance with resolving this issue, please contact your platform administrators.';
+    console.log(failure_message);
+    alert(failure_message);
+  }
 }
 
 export async function nbgitpullerUpdateButton(
