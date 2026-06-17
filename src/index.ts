@@ -4,7 +4,7 @@ import {
   JupyterFrontEndPlugin
 } from '@jupyterlab/application';
 
-import { nbgitpullerUpdateButton, repoUpdateProbe } from './utils';
+import { nbgitpullerUpdateButton, repoUpdateProbe, widget_id } from './utils';
 
 import { ISettingRegistry } from '@jupyterlab/settingregistry';
 
@@ -59,7 +59,7 @@ const plugin: JupyterFrontEndPlugin<void> = {
         // reloadWidget on extension loading
         await settings.set('reloadWidget', true);
 
-        async function loadSettings(
+        async function reloadWidgetUpdate(
           allSettings: ISettingRegistry.ISettings
         ): Promise<void> {
           const reloadWidget = allSettings.get('reloadWidget')
@@ -72,11 +72,27 @@ const plugin: JupyterFrontEndPlugin<void> = {
           }
         }
 
+        const autoUpdateWidget = settings.get('autoUpdateWidget')
+          .composite as boolean;
+
+        if (autoUpdateWidget) {
+          console.log('Pulling repos on auto update');
+          const clickIntervalID = setInterval(() => {
+            const widget: HTMLElement | null =
+              document.getElementById(widget_id);
+            console.log(widget);
+            if (widget) {
+              widget.click();
+              clearInterval(clickIntervalID);
+            }
+          }, 1000);
+        }
+
         // Read the settings
-        loadSettings(settings);
+        reloadWidgetUpdate(settings);
 
         // Listen for your plugin setting changes using Signal
-        settings.changed.connect(loadSettings);
+        settings.changed.connect(reloadWidgetUpdate);
 
         console.log(
           'JupyterLab extension nbgitpuller-jl-interface is fully operational!'
