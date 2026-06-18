@@ -212,6 +212,19 @@ export async function checkForRepoUpdates(
   };
 }
 
+// Inline styles for Tippy tooltip
+// Computed css styles are not loading for some reason
+function createURLHTML(
+  url: string,
+  text: string,
+  newTab: boolean = true
+): string {
+  const urlInlineStyle =
+    'white-space: nowrap; text-decoration-line: underline; color: #0000EE;';
+  const target = newTab ? ' target="_blank"' : '';
+  return `<p><a href="${url}"${target} style="${urlInlineStyle}">${text}</a></p>`;
+}
+
 export async function checkForUpdatesAndSetDisplay(
   repositories: IRepository[]
 ) {
@@ -224,19 +237,6 @@ export async function checkForUpdatesAndSetDisplay(
       reposToBeUpdated: IRepository[];
       reposWithErrors: IRepository[];
     };
-
-    // Inline styles for Tippy tooltip
-    // Computed css styles are not loading for some reason
-    const urlInlineStyle =
-      'white-space: nowrap; text-decoration-line: underline; color: #0000EE;';
-    function createURLHTML(
-      url: string,
-      text: string,
-      newTab: boolean = true
-    ): string {
-      const target = newTab ? ' target="_blank"' : '';
-      return `<p><a href="${url}"${target} style="${urlInlineStyle}">${text}</a></p>`;
-    }
 
     // Generate tooltip
     let tooltip;
