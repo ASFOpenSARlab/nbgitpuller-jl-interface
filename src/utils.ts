@@ -8,9 +8,15 @@ import { ISettingRegistry } from '@jupyterlab/settingregistry';
 
 import { PageConfig, URLExt } from '@jupyterlab/coreutils';
 
+import { Instance, Props } from 'tippy.js';
+import tippy from 'tippy.js';
+import 'tippy.js/dist/tippy.css';
+import 'tippy.js/themes/light.css';
+
 const widget_id = 'nbgitpuller-jl-interface-update-btn';
 let intervalID: ReturnType<typeof setInterval>;
 let currentlyUpdating: boolean = false;
+let nbgitpullerButtonTooltip: Instance<Props>;
 
 export interface IRepository {
   repoUrl: string;
@@ -73,6 +79,15 @@ export async function nbgitpullerUpdateButton(
 
   // 1-899 left justified, 900+ right justified
   app.shell.add(newWidget, 'top', { rank: rank });
+
+  nbgitpullerButtonTooltip = tippy(`#${widget_id}`, {
+    content: '<p>Tooltip Created</p>',
+    allowHTML: true,
+    theme: 'light',
+    placement: 'bottom',
+    interactive: true,
+    maxWidth: 1000 // Resizes width to any non-wrapping text
+  })[0];
 
   // Wait one second for initial creation timing
   await new Promise(f => setTimeout(f, 1000));
@@ -140,11 +155,11 @@ export async function repoUpdateProbe(
 export async function checkForRepoUpdates(
   repositories: IRepository[]
 ): Promise<{
-  response: { numToBeUpdated: number; numWithErrors: number };
+  response: { reposToBeUpdated: IRepository[]; reposWithErrors: IRepository[] };
   statuscode: number;
 }> {
-  let numToBeUpdated = 0;
-  let numWithErrors = 0;
+  const reposToBeUpdated: IRepository[] = [];
+  const reposWithErrors: IRepository[] = [];
   // Check every repository
   for (const repo of repositories) {
     // Get relevant repository information
@@ -178,16 +193,16 @@ export async function checkForRepoUpdates(
     const data = await needUpdate.json();
 
     if (data['returncode'] !== 0) {
-      numWithErrors += 1;
+      reposWithErrors.push(repo);
     } else if (data['updatefound']) {
-      numToBeUpdated += 1;
+      reposToBeUpdated.push(repo);
     }
   }
 
   return {
     response: {
-      numToBeUpdated: numToBeUpdated,
-      numWithErrors: numWithErrors
+      reposToBeUpdated: reposToBeUpdated,
+      reposWithErrors: reposWithErrors
     },
     statuscode: 0
   };
@@ -202,21 +217,59 @@ export async function checkForUpdatesAndSetDisplay(
   // Update display
   if (repoUpdates['statuscode'] === 0) {
     const updateCheckResponse = repoUpdates['response'] as {
-      numToBeUpdated: number;
-      numWithErrors: number;
+      reposToBeUpdated: IRepository[];
+      reposWithErrors: IRepository[];
     };
+
+    // Inline styles for Tippy tooltip
+    // Computed css styles are not loading for some reason
+    const urlInlineStyle =
+      'white-space: nowrap; text-decoration-line: underline; color: #0000EE;';
+    function createURLHTML(
+      url: string,
+      text: string,
+      newTab: boolean = true
+    ): string {
+      const target = newTab ? ' target="_blank"' : '';
+      return `<p><a href="${url}"${target} style="${urlInlineStyle}">${text}</a></p>`;
+    }
 
     // Generate tooltip
     let tooltip;
     let widgetState;
-    if (updateCheckResponse['numWithErrors'] > 0) {
-      tooltip = `${updateCheckResponse['numWithErrors']} repositories with errors`;
+
+    if (updateCheckResponse['reposWithErrors'].length > 0) {
+      let erroringRepos = '';
+      for (const repo of updateCheckResponse['reposWithErrors']) {
+        erroringRepos += createURLHTML(repo.repoUrl, repo.repoUrl);
+      }
+
+      tooltip = `
+      <div style="text-align: center;">
+        <p>${updateCheckResponse['reposWithErrors'].length} repositories with errors</p>
+        ${erroringRepos}
+      </div>
+      `;
       widgetState = WidgetState.Error;
-    } else if (updateCheckResponse['numToBeUpdated'] > 0) {
-      tooltip = `${updateCheckResponse['numToBeUpdated']} repositories awaiting updates\n`;
+    } else if (updateCheckResponse['reposToBeUpdated'].length > 0) {
+      let toUpdateRepos = '';
+      for (const repo of updateCheckResponse['reposToBeUpdated']) {
+        toUpdateRepos += createURLHTML(repo.repoUrl, repo.repoUrl);
+      }
+
+      tooltip = `
+      <div style="text-align: center;">
+        <p>${updateCheckResponse['reposToBeUpdated'].length} repositories awaiting updates</p>
+        ${toUpdateRepos}
+      </div>
+      `;
       widgetState = WidgetState.UpdateRequired;
     } else {
-      tooltip = `${repositories.length} repositories up to date`;
+      tooltip = `
+      <div>
+        <p>${repositories.length} repositories up to date</p>
+      </div>
+      `;
       widgetState = WidgetState.UpToDate;
     }
 
@@ -266,6 +319,7 @@ export async function setUpdateButtonDisplay(
   }
 
   function generateWidgetHTML(labelHTML: string): string {
+    nbgitpullerButtonTooltip.setContent(tooltip);
     return `
       <jp-button class="nbgitpuller-jl-interface-update-btn jp-ToolbarButtonComponent">
         ${labelHTML}
@@ -273,7 +327,6 @@ export async function setUpdateButtonDisplay(
   }
 
   // Update widget functionality
-  widget.title = tooltip;
   widget.innerHTML = generateWidgetHTML(labelHTML);
 
   return { error: '', returncode: 0 };
