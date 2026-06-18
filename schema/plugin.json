@@ -10,6 +10,18 @@
       "description": "Reloads widget, useful if you want to change your settings",
       "default": true
     },
+    "autoUpdateWidget": {
+      "type": "boolean",
+      "title": "Automatic Updates",
+      "description": "Automatically pulls in the latest changes to all repositories on server start.",
+      "default": true
+    },
+    "probeInterval": {
+      "type": "number",
+      "title": "Probe Interval",
+      "description": "The interval in ms between probes for repository updates.",
+      "default": 900000
+    },
     "repos": {
       "type": "array",
       "title": "Repositories",
@@ -29,12 +41,6 @@
       "title": "Relative Rank",
       "description": "Relative rank of feature. The bigger the number, the further to the right.",
       "default": 1000
-    },
-    "probeInterval": {
-      "type": "number",
-      "title": "Probe Interval",
-      "description": "The interval in ms between probes for repository updates.",
-      "default": 900000
     }
   },
   "additionalProperties": false

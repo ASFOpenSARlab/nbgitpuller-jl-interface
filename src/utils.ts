@@ -13,7 +13,7 @@ import tippy from 'tippy.js';
 import 'tippy.js/dist/tippy.css';
 import 'tippy.js/themes/light.css';
 
-const widget_id = 'nbgitpuller-jl-interface-update-btn';
+export const widget_id = 'nbgitpuller-jl-interface-update-btn';
 let intervalID: ReturnType<typeof setInterval>;
 let currentlyUpdating: boolean = false;
 let nbgitpullerButtonTooltip: Instance<Props>;
@@ -22,6 +22,26 @@ export interface IRepository {
   repoUrl: string;
   branch: string;
   destPath: string;
+}
+
+export async function pullRepos(repositories: IRepository[]): Promise<void> {
+  // Pull each repository
+  const failed_updates = await makeNbgitpullerRequest(repositories);
+
+  // Update widget to all updated or pending updates
+  await checkForUpdatesAndSetDisplay(repositories);
+
+  // Notify users of any failure
+  if (failed_updates.length !== 0) {
+    let failure_message = 'Failed to update the following repositories: \n';
+    for (const failure of failed_updates) {
+      failure_message += `- ${failure['repo']}\n`;
+    }
+    failure_message +=
+      'If you require assistance with resolving this issue, please contact your platform administrators.';
+    console.log(failure_message);
+    alert(failure_message);
+  }
 }
 
 export async function nbgitpullerUpdateButton(
@@ -55,23 +75,7 @@ export async function nbgitpullerUpdateButton(
     const pendingTooltip = 'Updating GitHub Repositories...';
     await setUpdateButtonDisplay(WidgetState.Updating, pendingTooltip);
 
-    // Pull each repository
-    const failed_updates = await makeNbgitpullerRequest(repositories);
-
-    // Update widget to all updated or pending updates
-    await checkForUpdatesAndSetDisplay(repositories);
-
-    // Notify users of any failure
-    if (failed_updates.length !== 0) {
-      let failure_message = 'Failed to update the following repositories: \n';
-      for (const failure of failed_updates) {
-        failure_message += `- ${failure['repo']}\n`;
-      }
-      failure_message +=
-        'If you require assistance with resolving this issue, please contact your platform administrators.';
-      console.log(failure_message);
-      alert(failure_message);
-    }
+    await pullRepos(repositories);
 
     // Unset updating flag
     currentlyUpdating = false;
