@@ -323,7 +323,7 @@ export async function setUpdateButtonDisplay(
   }
 
   function generateWidgetHTML(labelHTML: string): string {
-    nbgitpullerButtonTooltip.setContent(tooltip);
+    nbgitpullerButtonTooltip?.setContent(tooltip);
     return `
       <jp-button class="nbgitpuller-jl-interface-update-btn jp-ToolbarButtonComponent">
         ${labelHTML}
