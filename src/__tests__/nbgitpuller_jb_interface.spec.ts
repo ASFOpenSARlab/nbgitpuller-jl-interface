@@ -43,7 +43,16 @@ describe('nbgitpuller-jl-interface utils checkForRepoUpdates', () => {
     ]);
 
     expect(returnValue).toStrictEqual({
-      response: { numToBeUpdated: 1, numWithErrors: 0 },
+      response: {
+        reposToBeUpdated: [
+          {
+            repoUrl: 'https://fakerepo.com',
+            branch: 'main',
+            destPath: 'mypath'
+          }
+        ],
+        reposWithErrors: []
+      },
       statuscode: 0
     });
   });
@@ -69,7 +78,16 @@ describe('nbgitpuller-jl-interface utils checkForRepoUpdates', () => {
     ]);
 
     expect(returnValue).toStrictEqual({
-      response: { numToBeUpdated: 0, numWithErrors: 1 },
+      response: {
+        reposToBeUpdated: [],
+        reposWithErrors: [
+          {
+            repoUrl: 'https://fakerepo.com',
+            branch: 'main',
+            destPath: 'mypath'
+          }
+        ]
+      },
       statuscode: 0
     });
   });
@@ -124,7 +142,27 @@ describe('nbgitpuller-jl-interface utils checkForRepoUpdates', () => {
       { repoUrl: 'https://fakerepo.com', branch: 'main', destPath: 'mypath' }
     ]);
     expect(returnValue).toStrictEqual({
-      response: { numToBeUpdated: 2, numWithErrors: 1 },
+      response: {
+        reposToBeUpdated: [
+          {
+            repoUrl: 'https://fakerepo.com',
+            branch: 'main',
+            destPath: 'mypath'
+          },
+          {
+            repoUrl: 'https://fakerepo.com',
+            branch: 'main',
+            destPath: 'mypath'
+          }
+        ],
+        reposWithErrors: [
+          {
+            repoUrl: 'https://fakerepo.com',
+            branch: 'main',
+            destPath: 'mypath'
+          }
+        ]
+      },
       statuscode: 0
     });
   });
