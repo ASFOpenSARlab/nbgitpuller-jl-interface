@@ -308,14 +308,14 @@ export async function setUpdateButtonDisplay(
   // Create button label html
   let labelHTML;
   if (targetWidgetState === WidgetState.UpToDate) {
-    labelHTML = '<p><span class="success">◉</span> Up to Date</p>';
+    labelHTML = '<p><span class="success">◉</span> Repositories Up to Date</p>';
   } else if (targetWidgetState === WidgetState.Updating) {
-    labelHTML = '<p><span class="lds-dual-ring"></span> Updating</p>';
+    labelHTML = '<p><span class="lds-dual-ring"></span> Updating Repositories</p>';
   } else if (targetWidgetState === WidgetState.UpdateRequired) {
     labelHTML =
       '<p><span class="pending blink">◉</span> Update Repositories</p>';
   } else if (targetWidgetState === WidgetState.Error) {
-    labelHTML = '<p><span class="failure blink">◉</span> Update Error</p>';
+    labelHTML = '<p><span class="failure blink">◉</span> Repository Update Error</p>';
   } else if (targetWidgetState === WidgetState.Initializing) {
     labelHTML = '<p><span class="">◉</span> Initializing</p>';
   } else {
