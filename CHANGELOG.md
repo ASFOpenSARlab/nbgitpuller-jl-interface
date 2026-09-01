@@ -2,6 +2,26 @@
 
 <!-- <START NEW CHANGELOG ENTRY> -->
 
+## 1.0.1
+
+([Full Changelog](https://github.com/ASFOpenSARlab/nbgitpuller-jl-interface/compare/v1.0.0...42fd83a453d510913a2261235f02e4625ec2c8df))
+
+### Enhancements made
+
+- [OSL-4631, OSL-4762] replace tooltip with tippy tooltip [#11](https://github.com/ASFOpenSARlab/nbgitpuller-jl-interface/pull/11) ([@segallagher](https://github.com/segallagher), [@bbuechler](https://github.com/bbuechler))
+- feat: add autoupdate settings option [#10](https://github.com/ASFOpenSARlab/nbgitpuller-jl-interface/pull/10) ([@dgpalmieri](https://github.com/dgpalmieri), [@emlundell](https://github.com/emlundell))
+
+### Contributors to this release
+
+The following people contributed discussions, new ideas, code and documentation contributions, and review.
+See [our definition of contributors](https://github-activity.readthedocs.io/en/latest/use/#how-does-this-tool-define-contributions-in-the-reports).
+
+([GitHub contributors page for this release](https://github.com/ASFOpenSARlab/nbgitpuller-jl-interface/graphs/contributors?from=2026-04-22&to=2026-09-01&type=c))
+
+@bbuechler ([activity](https://github.com/search?q=repo%3AASFOpenSARlab%2Fnbgitpuller-jl-interface+involves%3Abbuechler+updated%3A2026-04-22..2026-09-01&type=Issues)) | @dgpalmieri ([activity](https://github.com/search?q=repo%3AASFOpenSARlab%2Fnbgitpuller-jl-interface+involves%3Adgpalmieri+updated%3A2026-04-22..2026-09-01&type=Issues)) | @emlundell ([activity](https://github.com/search?q=repo%3AASFOpenSARlab%2Fnbgitpuller-jl-interface+involves%3Aemlundell+updated%3A2026-04-22..2026-09-01&type=Issues)) | @segallagher ([activity](https://github.com/search?q=repo%3AASFOpenSARlab%2Fnbgitpuller-jl-interface+involves%3Asegallagher+updated%3A2026-04-22..2026-09-01&type=Issues))
+
+<!-- <END NEW CHANGELOG ENTRY> -->
+
 ## 1.0.0
 
 ([Full Changelog](https://github.com/ASFOpenSARlab/nbgitpuller-jl-interface/compare/v0.4.0...759fb6102164f8863a7b43141b34c915d43fe5bd))
@@ -24,8 +44,6 @@ See [our definition of contributors](https://github-activity.readthedocs.io/en/l
 ([GitHub contributors page for this release](https://github.com/ASFOpenSARlab/nbgitpuller-jl-interface/graphs/contributors?from=2026-04-15&to=2026-04-22&type=c))
 
 @Alex-Lewandowski ([activity](https://github.com/search?q=repo%3AASFOpenSARlab%2Fnbgitpuller-jl-interface+involves%3AAlex-Lewandowski+updated%3A2026-04-15..2026-04-22&type=Issues)) | @dgpalmieri ([activity](https://github.com/search?q=repo%3AASFOpenSARlab%2Fnbgitpuller-jl-interface+involves%3Adgpalmieri+updated%3A2026-04-15..2026-04-22&type=Issues)) | @emlundell ([activity](https://github.com/search?q=repo%3AASFOpenSARlab%2Fnbgitpuller-jl-interface+involves%3Aemlundell+updated%3A2026-04-15..2026-04-22&type=Issues)) | @segallagher ([activity](https://github.com/search?q=repo%3AASFOpenSARlab%2Fnbgitpuller-jl-interface+involves%3Asegallagher+updated%3A2026-04-15..2026-04-22&type=Issues))
-
-<!-- <END NEW CHANGELOG ENTRY> -->
 
 ## 0.4.0
 
