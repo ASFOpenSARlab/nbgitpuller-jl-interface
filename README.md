@@ -73,14 +73,14 @@ source .venv/bin/activate
 pip install --editable ".[dev,test]"
 
 # Link your development version of the extension with JupyterLab
-jupyter labextension develop . --overwrite
+jupyter-builder develop . --overwrite
 # Server extension must be manually installed in develop mode
 jupyter server extension enable nbgitpuller_jl_interface
 
 # Rebuild extension Typescript source after making changes
 # IMPORTANT: Unlike the steps above which are performed only once, do this step
 # every time you make a change.
-jlpm build
+jupyter-builder build
 ```
 
 You can watch the source directory and run JupyterLab at the same time in different terminals to watch for changes in the extension's source and automatically rebuild the extension.
