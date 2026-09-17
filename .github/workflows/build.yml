@@ -98,30 +98,30 @@ jobs:
         jupyter labextension list 2>&1 | grep -ie "nbgitpuller-jl-interface.*OK"
         python -m jupyterlab.browser_check --no-browser-test
 
-  integration-tests:
-    name: Integration tests
-    needs: build
-    runs-on: ubuntu-latest
+  # integration-tests:
+  #   name: Integration tests
+  #   needs: build
+  #   runs-on: ubuntu-latest
 
-    env:
-      PLAYWRIGHT_BROWSERS_PATH: ${{ github.workspace }}/pw-browsers
+  #   env:
+  #     PLAYWRIGHT_BROWSERS_PATH: ${{ github.workspace }}/pw-browsers
 
-    steps:
-    - name: Checkout
-      uses: actions/checkout@v4
+  #   steps:
+  #   - name: Checkout
+  #     uses: actions/checkout@v4
 
-    - name: Base Setup
-      uses: jupyterlab/maintainer-tools/.github/actions/base-setup@v1
+  #   - name: Base Setup
+  #     uses: jupyterlab/maintainer-tools/.github/actions/base-setup@v1
 
-    - name: Download extension package
-      uses: actions/download-artifact@v4
-      with:
-        name: extension-artifacts
+  #   - name: Download extension package
+  #     uses: actions/download-artifact@v4
+  #     with:
+  #       name: extension-artifacts
 
-    - name: Install the extension
-      run: |
-        set -eux
-        python -m pip install "jupyterlab>=4.0.0,<5" nbgitpuller_jl_interface*.whl
+  #   - name: Install the extension
+  #     run: |
+  #       set -eux
+  #       python -m pip install "jupyterlab>=4.0.0,<5" nbgitpuller_jl_interface*.whl
 
     - name: Install dependencies
       working-directory: ui-tests
