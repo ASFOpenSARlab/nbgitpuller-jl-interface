@@ -1,10 +1,11 @@
 # Changes here will be overwritten by Copier; NEVER EDIT MANUALLY
-_commit: v4.5.2
+_commit: v4.6.5
 _src_path: https://github.com/jupyterlab/extension-template
+advanced: false
 author_email: admin@opensciencelab.asf.alaska.edu
 author_name: OpenScienceLab
 has_ai_rules: false
-has_binder: true
+has_binder: false
 has_settings: true
 kind: frontend-and-server
 labextension_name: nbgitpuller-jl-interface
