@@ -4,15 +4,13 @@ import {
   JupyterFrontEndPlugin
 } from '@jupyterlab/application';
 
-import {
-  createNbgitpullerWidget,
-  repoUpdateProbe,
-  update_btn_widget_id
-} from './utils';
-
 import { ISettingRegistry } from '@jupyterlab/settingregistry';
 
 import { ICommandPalette } from '@jupyterlab/apputils';
+
+import { ServerConnection } from '@jupyterlab/services';
+
+import { PageConfig } from '@jupyterlab/coreutils';
 
 /**
  * Initialization data for the nbgitpuller-jl-interface extension.
@@ -57,24 +55,34 @@ const plugin: JupyterFrontEndPlugin<void> = {
       return;
     }
 
+    const connectionSettings = ServerConnection.makeSettings({
+      baseUrl: PageConfig.getBaseUrl()
+    });
+
     const { commands } = app;
 
     // Initialize buttons
     Promise.all([app.restored, settingRegistry.load(plugin.id)])
       .then(async ([, settings]) => {
+        const {
+          createNbgitpullerWidget,
+          repoUpdateProbe,
+          update_btn_widget_id
+        } = await import('./utils');
+
         // reloadWidget on extension loading
         await settings.set('reloadWidget', true);
 
         async function reloadWidgetUpdate(
-          allSettings: ISettingRegistry.ISettings
+          pluginSettings: ISettingRegistry.ISettings
         ): Promise<void> {
-          const reloadWidget = allSettings.get('reloadWidget')
+          const reloadWidget = pluginSettings.get('reloadWidget')
             .composite as boolean;
 
           if (reloadWidget) {
-            await createNbgitpullerWidget(app, allSettings, commands);
-            await repoUpdateProbe(allSettings);
-            await allSettings.set('reloadWidget', false);
+            await createNbgitpullerWidget(app, pluginSettings, connectionSettings, commands);
+            await repoUpdateProbe(pluginSettings, connectionSettings);
+            await pluginSettings.set('reloadWidget', false);
           }
         }
 
