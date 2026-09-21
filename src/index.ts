@@ -10,8 +10,6 @@ import { ICommandPalette } from '@jupyterlab/apputils';
 
 import { ServerConnection } from '@jupyterlab/services';
 
-import { PageConfig } from '@jupyterlab/coreutils';
-
 /**
  * Initialization data for the nbgitpuller-jl-interface extension.
  */
@@ -55,9 +53,7 @@ const plugin: JupyterFrontEndPlugin<void> = {
       return;
     }
 
-    const connectionSettings = ServerConnection.makeSettings({
-      baseUrl: PageConfig.getBaseUrl()
-    });
+    const connectionSettings = ServerConnection.makeSettings();
 
     const { commands } = app;
 
