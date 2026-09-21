@@ -4,7 +4,7 @@ import {
   JupyterFrontEndPlugin
 } from '@jupyterlab/application';
 
-import { nbgitpullerUpdateButton, repoUpdateProbe, widget_id } from './utils';
+import { createNbgitpullerWidget, repoUpdateProbe, update_btn_widget_id } from './utils';
 
 import { ISettingRegistry } from '@jupyterlab/settingregistry';
 
@@ -53,6 +53,8 @@ const plugin: JupyterFrontEndPlugin<void> = {
       return;
     }
 
+    const { commands } = app;
+
     // Initialize buttons
     Promise.all([app.restored, settingRegistry.load(plugin.id)])
       .then(async ([, settings]) => {
@@ -66,7 +68,7 @@ const plugin: JupyterFrontEndPlugin<void> = {
             .composite as boolean;
 
           if (reloadWidget) {
-            await nbgitpullerUpdateButton(app, allSettings);
+            await createNbgitpullerWidget(app, allSettings, commands);
             await repoUpdateProbe(allSettings);
             await allSettings.set('reloadWidget', false);
           }
@@ -79,8 +81,7 @@ const plugin: JupyterFrontEndPlugin<void> = {
           console.log('Pulling repos on auto update');
           const clickIntervalID = setInterval(() => {
             const widget: HTMLElement | null =
-              document.getElementById(widget_id);
-            console.log(widget);
+              document.getElementById(update_btn_widget_id);
             if (widget) {
               widget.click();
               clearInterval(clickIntervalID);
