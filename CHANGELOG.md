@@ -2,6 +2,26 @@
 
 <!-- <START NEW CHANGELOG ENTRY> -->
 
+## 1.0.2
+
+([Full Changelog](https://github.com/ASFOpenSARlab/nbgitpuller-jl-interface/compare/v1.0.1...0b95da314d9b73591f42491947d7b05564f5d620))
+
+### Enhancements made
+
+- [OSL-4634] Widget Settings Button [#15](https://github.com/ASFOpenSARlab/nbgitpuller-jl-interface/pull/15) ([@segallagher](https://github.com/segallagher), [@emlundell](https://github.com/emlundell))
+- update copier template [#14](https://github.com/ASFOpenSARlab/nbgitpuller-jl-interface/pull/14) ([@segallagher](https://github.com/segallagher), [@dgpalmieri](https://github.com/dgpalmieri))
+
+### Contributors to this release
+
+The following people contributed discussions, new ideas, code and documentation contributions, and review.
+See [our definition of contributors](https://github-activity.readthedocs.io/en/latest/use/#how-does-this-tool-define-contributions-in-the-reports).
+
+([GitHub contributors page for this release](https://github.com/ASFOpenSARlab/nbgitpuller-jl-interface/graphs/contributors?from=2026-09-01&to=2026-09-21&type=c))
+
+@dgpalmieri ([activity](https://github.com/search?q=repo%3AASFOpenSARlab%2Fnbgitpuller-jl-interface+involves%3Adgpalmieri+updated%3A2026-09-01..2026-09-21&type=Issues)) | @emlundell ([activity](https://github.com/search?q=repo%3AASFOpenSARlab%2Fnbgitpuller-jl-interface+involves%3Aemlundell+updated%3A2026-09-01..2026-09-21&type=Issues)) | @segallagher ([activity](https://github.com/search?q=repo%3AASFOpenSARlab%2Fnbgitpuller-jl-interface+involves%3Asegallagher+updated%3A2026-09-01..2026-09-21&type=Issues))
+
+<!-- <END NEW CHANGELOG ENTRY> -->
+
 ## 1.0.1
 
 ([Full Changelog](https://github.com/ASFOpenSARlab/nbgitpuller-jl-interface/compare/v1.0.0...42fd83a453d510913a2261235f02e4625ec2c8df))
@@ -19,8 +39,6 @@ See [our definition of contributors](https://github-activity.readthedocs.io/en/l
 ([GitHub contributors page for this release](https://github.com/ASFOpenSARlab/nbgitpuller-jl-interface/graphs/contributors?from=2026-04-22&to=2026-09-01&type=c))
 
 @bbuechler ([activity](https://github.com/search?q=repo%3AASFOpenSARlab%2Fnbgitpuller-jl-interface+involves%3Abbuechler+updated%3A2026-04-22..2026-09-01&type=Issues)) | @dgpalmieri ([activity](https://github.com/search?q=repo%3AASFOpenSARlab%2Fnbgitpuller-jl-interface+involves%3Adgpalmieri+updated%3A2026-04-22..2026-09-01&type=Issues)) | @emlundell ([activity](https://github.com/search?q=repo%3AASFOpenSARlab%2Fnbgitpuller-jl-interface+involves%3Aemlundell+updated%3A2026-04-22..2026-09-01&type=Issues)) | @segallagher ([activity](https://github.com/search?q=repo%3AASFOpenSARlab%2Fnbgitpuller-jl-interface+involves%3Asegallagher+updated%3A2026-04-22..2026-09-01&type=Issues))
-
-<!-- <END NEW CHANGELOG ENTRY> -->
 
 ## 1.0.0
 
