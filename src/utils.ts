@@ -2,26 +2,21 @@ import { JupyterFrontEnd } from '@jupyterlab/application';
 
 import { find } from '@lumino/algorithm';
 
-import { Widget, BoxPanel } from '@lumino/widgets';
+import { Widget } from '@lumino/widgets';
 
 import { ISettingRegistry } from '@jupyterlab/settingregistry';
 
 import { PageConfig, URLExt } from '@jupyterlab/coreutils';
-
-import { CommandRegistry } from '@lumino/commands';
 
 import { Instance, Props } from 'tippy.js';
 import tippy from 'tippy.js';
 import 'tippy.js/dist/tippy.css';
 import 'tippy.js/themes/light.css';
 
-export const update_btn_widget_id = 'nbgitpuller-jl-interface-update-btn';
+export const widget_id = 'nbgitpuller-jl-interface-update-btn';
 let intervalID: ReturnType<typeof setInterval>;
 let currentlyUpdating: boolean = false;
 let nbgitpullerButtonTooltip: Instance<Props>;
-
-export const settings_btn_widget_id = 'nbgitpuller-jl-interface-settings-btn';
-export const panel_id = 'nbgitpuller-panel';
 
 export interface IRepository {
   repoUrl: string;
@@ -49,66 +44,22 @@ export async function pullRepos(repositories: IRepository[]): Promise<void> {
   }
 }
 
-export async function createNbgitpullerWidget(
+export async function nbgitpullerUpdateButton(
   app: JupyterFrontEnd,
-  allSettings: ISettingRegistry.ISettings,
-  commands: CommandRegistry,
-): Promise<void>{
+  allSettings: ISettingRegistry.ISettings
+): Promise<void> {
   const repositories = allSettings.get('repos')
     .composite as any as IRepository[];
   const rank = allSettings.get('rank').composite as number;
 
-  // Remove previous panel if exists
-  const widget = find(app.shell.widgets('top'), w => w.id === panel_id);
+  // Remove previous button if exists
+  const widget = find(app.shell.widgets('top'), w => w.id === widget_id);
   if (widget) {
     widget.dispose();
   }
 
-  const updateWidget = await nbgitpullerUpdateButton(repositories);
-
-  const settingsWidget = await settingsButtonLinkWidget(commands);
-
-  const panel = new BoxPanel({
-    direction: "left-to-right",
-    spacing: 0,
-  });
-  panel.id = panel_id
-  panel.addClass('nbgitpuller-widget-panel');
-
-  panel.addWidget(updateWidget);
-  panel.addWidget(settingsWidget);
-
-  BoxPanel.setStretch(updateWidget, 10);
-  BoxPanel.setStretch(settingsWidget, 2);
-
-  // 1-899 left justified, 900+ right justified
-  app.shell.add(panel, 'top', { rank: rank });
-
-  // Add tooltip
-  nbgitpullerButtonTooltip = tippy(`#${panel_id}`, {
-    content: '<p>Tooltip Created</p>',
-    allowHTML: true,
-    theme: 'light',
-    placement: 'bottom',
-    interactive: true,
-    maxWidth: 1000 // Resizes width to any non-wrapping text
-  })[0];
-
-  // Wait one second for initial creation timing
-  // await new Promise(f => setTimeout(f, 1000));
-
-  // Check for updates
-  await checkForUpdatesAndSetDisplay(repositories);
-
-  // Log success
-  console.log('nbgitpuller-jl-interface settings loaded');
-}
-
-export async function nbgitpullerUpdateButton(
-  repositories: IRepository[],
-): Promise<Widget> {
   const newWidget = new Widget();
-  newWidget.id = update_btn_widget_id;
+  newWidget.id = widget_id;
   newWidget.addClass('lm-Widget');
   newWidget.addClass('jp-ToolbarButton');
   newWidget.addClass('nbgitpuller-jl-interface-wrapper');
@@ -130,40 +81,25 @@ export async function nbgitpullerUpdateButton(
     currentlyUpdating = false;
   });
 
-  return newWidget;
-}
+  // 1-899 left justified, 900+ right justified
+  app.shell.add(newWidget, 'top', { rank: rank });
 
-export async function settingsButtonLinkWidget(
-  commands: CommandRegistry
-): Promise<Widget>{
-  const newWidget = new Widget();
-  newWidget.id = settings_btn_widget_id;
-  newWidget.addClass('nbgitpuller-jl-interface-wrapper');
-  
-  // Set widget text
-  newWidget.node.innerHTML = `
-      <jp-button class="jp-ToolbarButtonComponent">
-        ⚙️
-      </jp-button>`;
-  
-  newWidget.node.addEventListener('click', async () => {
-    commands.execute(
-      "settingeditor:open",
-      {
-        query: "nbgitpuller-jl-interface",
-        settingEditorType: "ui",
-      }
-    );
+  nbgitpullerButtonTooltip = tippy(`#${widget_id}`, {
+    content: '<p>Tooltip Created</p>',
+    allowHTML: true,
+    theme: 'light',
+    placement: 'bottom',
+    interactive: true,
+    maxWidth: 1000 // Resizes width to any non-wrapping text
+  })[0];
 
-    await new Promise(f => setTimeout(f, 100));
+  // Wait one second for initial creation timing
+  await new Promise(f => setTimeout(f, 1000));
 
-    const settings_btn = document.querySelector<HTMLDivElement>('[data-id="nbgitpuller-jl-interface:plugin"]');
-    if(settings_btn){
-      settings_btn.click()
-    }
-  });
+  // Check for updates
+  await checkForUpdatesAndSetDisplay(repositories);
 
-  return newWidget;
+  console.log('nbgitpuller-jl-interface settings loaded');
 }
 
 export async function makeNbgitpullerRequest(repositories: IRepository[]) {
@@ -364,7 +300,7 @@ export async function setUpdateButtonDisplay(
   tooltip: string
 ): Promise<{ error: string; returncode: number }> {
   // Get widget
-  const widget: HTMLElement | null = document.getElementById(update_btn_widget_id);
+  const widget: HTMLElement | null = document.getElementById(widget_id);
   if (!widget) {
     return { error: 'Unable to find nbgitpuller widget', returncode: 1 };
   }
@@ -391,7 +327,7 @@ export async function setUpdateButtonDisplay(
   function generateWidgetHTML(labelHTML: string): string {
     nbgitpullerButtonTooltip?.setContent(tooltip);
     return `
-      <jp-button class="jp-ToolbarButtonComponent">
+      <jp-button class="nbgitpuller-jl-interface-update-btn jp-ToolbarButtonComponent">
         ${labelHTML}
       </jp-button>`;
   }
