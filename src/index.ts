@@ -4,11 +4,11 @@ import {
   JupyterFrontEndPlugin
 } from '@jupyterlab/application';
 
-import { nbgitpullerUpdateButton, repoUpdateProbe, widget_id } from './utils';
-
 import { ISettingRegistry } from '@jupyterlab/settingregistry';
 
 import { ICommandPalette } from '@jupyterlab/apputils';
+
+import { ServerConnection } from '@jupyterlab/services';
 
 /**
  * Initialization data for the nbgitpuller-jl-interface extension.
@@ -53,22 +53,37 @@ const plugin: JupyterFrontEndPlugin<void> = {
       return;
     }
 
+    const connectionSettings = ServerConnection.makeSettings();
+
+    const { commands } = app;
+
     // Initialize buttons
     Promise.all([app.restored, settingRegistry.load(plugin.id)])
       .then(async ([, settings]) => {
+        const {
+          createNbgitpullerWidget,
+          repoUpdateProbe,
+          update_btn_widget_id
+        } = await import('./utils');
+
         // reloadWidget on extension loading
         await settings.set('reloadWidget', true);
 
         async function reloadWidgetUpdate(
-          allSettings: ISettingRegistry.ISettings
+          pluginSettings: ISettingRegistry.ISettings
         ): Promise<void> {
-          const reloadWidget = allSettings.get('reloadWidget')
+          const reloadWidget = pluginSettings.get('reloadWidget')
             .composite as boolean;
 
           if (reloadWidget) {
-            await nbgitpullerUpdateButton(app, allSettings);
-            await repoUpdateProbe(allSettings);
-            await allSettings.set('reloadWidget', false);
+            await createNbgitpullerWidget(
+              app,
+              pluginSettings,
+              connectionSettings,
+              commands
+            );
+            await repoUpdateProbe(pluginSettings, connectionSettings);
+            await pluginSettings.set('reloadWidget', false);
           }
         }
 
@@ -79,8 +94,7 @@ const plugin: JupyterFrontEndPlugin<void> = {
           console.log('Pulling repos on auto update');
           const clickIntervalID = setInterval(() => {
             const widget: HTMLElement | null =
-              document.getElementById(widget_id);
-            console.log(widget);
+              document.getElementById(update_btn_widget_id);
             if (widget) {
               widget.click();
               clearInterval(clickIntervalID);

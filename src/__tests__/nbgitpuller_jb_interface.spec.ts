@@ -16,6 +16,8 @@ import {
   WidgetState
 } from '../utils';
 
+import { ServerConnection } from '@jupyterlab/services';
+
 describe('nbgitpuller-jl-interface utils checkForRepoUpdates', () => {
   beforeEach(() => {});
 
@@ -38,9 +40,10 @@ describe('nbgitpuller-jl-interface utils checkForRepoUpdates', () => {
         }) as unknown as Response
     );
 
-    const returnValue = await checkForRepoUpdates([
-      { repoUrl: 'https://fakerepo.com', branch: 'main', destPath: 'mypath' }
-    ]);
+    const returnValue = await checkForRepoUpdates(
+      [{ repoUrl: 'https://fakerepo.com', branch: 'main', destPath: 'mypath' }],
+      ServerConnection.makeSettings()
+    );
 
     expect(returnValue).toStrictEqual({
       response: {
@@ -73,9 +76,10 @@ describe('nbgitpuller-jl-interface utils checkForRepoUpdates', () => {
     );
 
     // const returnValue = await fetch("https://aaagaag.com")
-    const returnValue = await checkForRepoUpdates([
-      { repoUrl: 'https://fakerepo.com', branch: 'main', destPath: 'mypath' }
-    ]);
+    const returnValue = await checkForRepoUpdates(
+      [{ repoUrl: 'https://fakerepo.com', branch: 'main', destPath: 'mypath' }],
+      ServerConnection.makeSettings()
+    );
 
     expect(returnValue).toStrictEqual({
       response: {
@@ -136,11 +140,14 @@ describe('nbgitpuller-jl-interface utils checkForRepoUpdates', () => {
       );
 
     // const returnValue = await fetch("https://aaagaag.com")
-    const returnValue = await checkForRepoUpdates([
-      { repoUrl: 'https://fakerepo.com', branch: 'main', destPath: 'mypath' },
-      { repoUrl: 'https://fakerepo.com', branch: 'main', destPath: 'mypath' },
-      { repoUrl: 'https://fakerepo.com', branch: 'main', destPath: 'mypath' }
-    ]);
+    const returnValue = await checkForRepoUpdates(
+      [
+        { repoUrl: 'https://fakerepo.com', branch: 'main', destPath: 'mypath' },
+        { repoUrl: 'https://fakerepo.com', branch: 'main', destPath: 'mypath' },
+        { repoUrl: 'https://fakerepo.com', branch: 'main', destPath: 'mypath' }
+      ],
+      ServerConnection.makeSettings()
+    );
     expect(returnValue).toStrictEqual({
       response: {
         reposToBeUpdated: [

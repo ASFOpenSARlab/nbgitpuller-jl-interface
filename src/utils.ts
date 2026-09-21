@@ -2,21 +2,27 @@ import { JupyterFrontEnd } from '@jupyterlab/application';
 
 import { find } from '@lumino/algorithm';
 
-import { Widget } from '@lumino/widgets';
+import { Widget, BoxPanel } from '@lumino/widgets';
 
 import { ISettingRegistry } from '@jupyterlab/settingregistry';
 
-import { PageConfig, URLExt } from '@jupyterlab/coreutils';
+import { URLExt } from '@jupyterlab/coreutils';
+
+import { CommandRegistry } from '@lumino/commands';
 
 import { Instance, Props } from 'tippy.js';
 import tippy from 'tippy.js';
 import 'tippy.js/dist/tippy.css';
 import 'tippy.js/themes/light.css';
+import { ServerConnection } from '@jupyterlab/services';
 
-export const widget_id = 'nbgitpuller-jl-interface-update-btn';
+export const update_btn_widget_id = 'nbgitpuller-jl-interface-update-btn';
 let intervalID: ReturnType<typeof setInterval>;
 let currentlyUpdating: boolean = false;
 let nbgitpullerButtonTooltip: Instance<Props>;
+
+export const settings_btn_widget_id = 'nbgitpuller-jl-interface-settings-btn';
+export const panel_id = 'nbgitpuller-panel';
 
 export interface IRepository {
   repoUrl: string;
@@ -24,12 +30,18 @@ export interface IRepository {
   destPath: string;
 }
 
-export async function pullRepos(repositories: IRepository[]): Promise<void> {
+export async function pullRepos(
+  repositories: IRepository[],
+  connectionSettings: ServerConnection.ISettings
+): Promise<void> {
   // Pull each repository
-  const failed_updates = await makeNbgitpullerRequest(repositories);
+  const failed_updates = await makeNbgitpullerRequest(
+    repositories,
+    connectionSettings
+  );
 
   // Update widget to all updated or pending updates
-  await checkForUpdatesAndSetDisplay(repositories);
+  await checkForUpdatesAndSetDisplay(repositories, connectionSettings);
 
   // Notify users of any failure
   if (failed_updates.length !== 0) {
@@ -44,22 +56,71 @@ export async function pullRepos(repositories: IRepository[]): Promise<void> {
   }
 }
 
-export async function nbgitpullerUpdateButton(
+export async function createNbgitpullerWidget(
   app: JupyterFrontEnd,
-  allSettings: ISettingRegistry.ISettings
+  pluginSettings: ISettingRegistry.ISettings,
+  connectionSettings: ServerConnection.ISettings,
+  commands: CommandRegistry
 ): Promise<void> {
-  const repositories = allSettings.get('repos')
+  const repositories = pluginSettings.get('repos')
     .composite as any as IRepository[];
-  const rank = allSettings.get('rank').composite as number;
+  const rank = pluginSettings.get('rank').composite as number;
 
-  // Remove previous button if exists
-  const widget = find(app.shell.widgets('top'), w => w.id === widget_id);
+  // Remove previous panel if exists
+  const widget = find(app.shell.widgets('top'), w => w.id === panel_id);
   if (widget) {
     widget.dispose();
   }
 
+  const updateWidget = await nbgitpullerUpdateButton(
+    repositories,
+    connectionSettings
+  );
+
+  const settingsWidget = await settingsButtonLinkWidget(commands);
+
+  const panel = new BoxPanel({
+    direction: 'left-to-right',
+    spacing: 0
+  });
+  panel.id = panel_id;
+  panel.addClass('nbgitpuller-widget-panel');
+
+  panel.addWidget(updateWidget);
+  panel.addWidget(settingsWidget);
+
+  BoxPanel.setStretch(updateWidget, 10);
+  BoxPanel.setStretch(settingsWidget, 2);
+
+  // 1-899 left justified, 900+ right justified
+  app.shell.add(panel, 'top', { rank: rank });
+
+  // Add tooltip
+  nbgitpullerButtonTooltip = tippy(`#${panel_id}`, {
+    content: '<p>Tooltip Created</p>',
+    allowHTML: true,
+    theme: 'light',
+    placement: 'bottom',
+    interactive: true,
+    maxWidth: 1000 // Resizes width to any non-wrapping text
+  })[0];
+
+  // Wait one second for initial creation timing
+  await new Promise(f => setTimeout(f, 100));
+
+  // Check for updates
+  await checkForUpdatesAndSetDisplay(repositories, connectionSettings);
+
+  // Log success
+  console.log('nbgitpuller-jl-interface settings loaded');
+}
+
+export async function nbgitpullerUpdateButton(
+  repositories: IRepository[],
+  connectionSettings: ServerConnection.ISettings
+): Promise<Widget> {
   const newWidget = new Widget();
-  newWidget.id = widget_id;
+  newWidget.id = update_btn_widget_id;
   newWidget.addClass('lm-Widget');
   newWidget.addClass('jp-ToolbarButton');
   newWidget.addClass('nbgitpuller-jl-interface-wrapper');
@@ -75,36 +136,56 @@ export async function nbgitpullerUpdateButton(
     const pendingTooltip = 'Updating GitHub Repositories...';
     await setUpdateButtonDisplay(WidgetState.Updating, pendingTooltip);
 
-    await pullRepos(repositories);
+    await pullRepos(repositories, connectionSettings);
 
     // Unset updating flag
     currentlyUpdating = false;
   });
 
-  // 1-899 left justified, 900+ right justified
-  app.shell.add(newWidget, 'top', { rank: rank });
-
-  nbgitpullerButtonTooltip = tippy(`#${widget_id}`, {
-    content: '<p>Tooltip Created</p>',
-    allowHTML: true,
-    theme: 'light',
-    placement: 'bottom',
-    interactive: true,
-    maxWidth: 1000 // Resizes width to any non-wrapping text
-  })[0];
-
-  // Wait one second for initial creation timing
-  await new Promise(f => setTimeout(f, 1000));
-
-  // Check for updates
-  await checkForUpdatesAndSetDisplay(repositories);
-
-  console.log('nbgitpuller-jl-interface settings loaded');
+  return newWidget;
 }
 
-export async function makeNbgitpullerRequest(repositories: IRepository[]) {
-  const baseUrl = PageConfig.getBaseUrl();
-  const url = URLExt.join(baseUrl, 'nbgitpuller-jl-interface', 'gitpuller');
+export async function settingsButtonLinkWidget(
+  commands: CommandRegistry
+): Promise<Widget> {
+  const newWidget = new Widget();
+  newWidget.id = settings_btn_widget_id;
+  newWidget.addClass('nbgitpuller-jl-interface-wrapper');
+
+  // Set widget text
+  newWidget.node.innerHTML = `
+      <jp-button class="jp-ToolbarButtonComponent">
+        ⚙️
+      </jp-button>`;
+
+  newWidget.node.addEventListener('click', async () => {
+    commands.execute('settingeditor:open', {
+      query: 'nbgitpuller-jl-interface',
+      settingEditorType: 'ui'
+    });
+
+    await new Promise(f => setTimeout(f, 100));
+
+    const settings_btn = document.querySelector<HTMLDivElement>(
+      '[data-id="nbgitpuller-jl-interface:plugin"]'
+    );
+    if (settings_btn) {
+      settings_btn.click();
+    }
+  });
+
+  return newWidget;
+}
+
+export async function makeNbgitpullerRequest(
+  repositories: IRepository[],
+  connectionSettings: ServerConnection.ISettings
+) {
+  const url = URLExt.join(
+    connectionSettings.baseUrl,
+    'nbgitpuller-jl-interface',
+    'gitpuller'
+  );
   const xsrfToken = document.cookie
     .split(';')
     .find(row => row.startsWith('_xsrf='))
@@ -141,23 +222,25 @@ export async function makeNbgitpullerRequest(repositories: IRepository[]) {
 }
 
 export async function repoUpdateProbe(
-  allSettings: ISettingRegistry.ISettings
+  pluginSettings: ISettingRegistry.ISettings,
+  connectionSettings: ServerConnection.ISettings
 ): Promise<void> {
-  const repositories = allSettings.get('repos')
+  const repositories = pluginSettings.get('repos')
     .composite as any as IRepository[];
-  const probeInterval = allSettings.get('probeInterval').composite as number;
+  const probeInterval = pluginSettings.get('probeInterval').composite as number;
 
   // Stop previous interval (if settings were changed)
   clearInterval(intervalID);
 
   // Create interval
   intervalID = setInterval(async () => {
-    await checkForUpdatesAndSetDisplay(repositories);
+    await checkForUpdatesAndSetDisplay(repositories, connectionSettings);
   }, probeInterval);
 }
 
 export async function checkForRepoUpdates(
-  repositories: IRepository[]
+  repositories: IRepository[],
+  connectionSettings: ServerConnection.ISettings
 ): Promise<{
   response: { reposToBeUpdated: IRepository[]; reposWithErrors: IRepository[] };
   statuscode: number;
@@ -172,9 +255,8 @@ export async function checkForRepoUpdates(
     const destination = repo['destPath'];
 
     // Poll repo for any new commits
-    const baseUrl = PageConfig.getBaseUrl();
     const url = URLExt.join(
-      baseUrl,
+      connectionSettings.baseUrl,
       'nbgitpuller-jl-interface',
       'update-check'
     );
@@ -226,10 +308,14 @@ function createURLHTML(
 }
 
 export async function checkForUpdatesAndSetDisplay(
-  repositories: IRepository[]
+  repositories: IRepository[],
+  connectionSettings: ServerConnection.ISettings
 ) {
   // Check for updates
-  const repoUpdates = await checkForRepoUpdates(repositories);
+  const repoUpdates = await checkForRepoUpdates(
+    repositories,
+    connectionSettings
+  );
 
   // Update display
   if (repoUpdates['statuscode'] === 0) {
@@ -300,7 +386,8 @@ export async function setUpdateButtonDisplay(
   tooltip: string
 ): Promise<{ error: string; returncode: number }> {
   // Get widget
-  const widget: HTMLElement | null = document.getElementById(widget_id);
+  const widget: HTMLElement | null =
+    document.getElementById(update_btn_widget_id);
   if (!widget) {
     return { error: 'Unable to find nbgitpuller widget', returncode: 1 };
   }
@@ -327,7 +414,7 @@ export async function setUpdateButtonDisplay(
   function generateWidgetHTML(labelHTML: string): string {
     nbgitpullerButtonTooltip?.setContent(tooltip);
     return `
-      <jp-button class="nbgitpuller-jl-interface-update-btn jp-ToolbarButtonComponent">
+      <jp-button class="jp-ToolbarButtonComponent">
         ${labelHTML}
       </jp-button>`;
   }
