@@ -4,7 +4,11 @@ import {
   JupyterFrontEndPlugin
 } from '@jupyterlab/application';
 
-import { createNbgitpullerWidget, repoUpdateProbe, update_btn_widget_id } from './utils';
+import {
+  createNbgitpullerWidget,
+  repoUpdateProbe,
+  update_btn_widget_id
+} from './utils';
 
 import { ISettingRegistry } from '@jupyterlab/settingregistry';
 

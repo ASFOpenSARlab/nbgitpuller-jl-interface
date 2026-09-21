@@ -52,8 +52,8 @@ export async function pullRepos(repositories: IRepository[]): Promise<void> {
 export async function createNbgitpullerWidget(
   app: JupyterFrontEnd,
   allSettings: ISettingRegistry.ISettings,
-  commands: CommandRegistry,
-): Promise<void>{
+  commands: CommandRegistry
+): Promise<void> {
   const repositories = allSettings.get('repos')
     .composite as any as IRepository[];
   const rank = allSettings.get('rank').composite as number;
@@ -69,10 +69,10 @@ export async function createNbgitpullerWidget(
   const settingsWidget = await settingsButtonLinkWidget(commands);
 
   const panel = new BoxPanel({
-    direction: "left-to-right",
-    spacing: 0,
+    direction: 'left-to-right',
+    spacing: 0
   });
-  panel.id = panel_id
+  panel.id = panel_id;
   panel.addClass('nbgitpuller-widget-panel');
 
   panel.addWidget(updateWidget);
@@ -105,7 +105,7 @@ export async function createNbgitpullerWidget(
 }
 
 export async function nbgitpullerUpdateButton(
-  repositories: IRepository[],
+  repositories: IRepository[]
 ): Promise<Widget> {
   const newWidget = new Widget();
   newWidget.id = update_btn_widget_id;
@@ -135,31 +135,30 @@ export async function nbgitpullerUpdateButton(
 
 export async function settingsButtonLinkWidget(
   commands: CommandRegistry
-): Promise<Widget>{
+): Promise<Widget> {
   const newWidget = new Widget();
   newWidget.id = settings_btn_widget_id;
   newWidget.addClass('nbgitpuller-jl-interface-wrapper');
-  
+
   // Set widget text
   newWidget.node.innerHTML = `
       <jp-button class="jp-ToolbarButtonComponent">
         ⚙️
       </jp-button>`;
-  
+
   newWidget.node.addEventListener('click', async () => {
-    commands.execute(
-      "settingeditor:open",
-      {
-        query: "nbgitpuller-jl-interface",
-        settingEditorType: "ui",
-      }
-    );
+    commands.execute('settingeditor:open', {
+      query: 'nbgitpuller-jl-interface',
+      settingEditorType: 'ui'
+    });
 
     await new Promise(f => setTimeout(f, 100));
 
-    const settings_btn = document.querySelector<HTMLDivElement>('[data-id="nbgitpuller-jl-interface:plugin"]');
-    if(settings_btn){
-      settings_btn.click()
+    const settings_btn = document.querySelector<HTMLDivElement>(
+      '[data-id="nbgitpuller-jl-interface:plugin"]'
+    );
+    if (settings_btn) {
+      settings_btn.click();
     }
   });
 
@@ -364,7 +363,8 @@ export async function setUpdateButtonDisplay(
   tooltip: string
 ): Promise<{ error: string; returncode: number }> {
   // Get widget
-  const widget: HTMLElement | null = document.getElementById(update_btn_widget_id);
+  const widget: HTMLElement | null =
+    document.getElementById(update_btn_widget_id);
   if (!widget) {
     return { error: 'Unable to find nbgitpuller widget', returncode: 1 };
   }
