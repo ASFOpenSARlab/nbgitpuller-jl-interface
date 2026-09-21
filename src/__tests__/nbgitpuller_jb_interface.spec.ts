@@ -43,8 +43,8 @@ describe('nbgitpuller-jl-interface utils checkForRepoUpdates', () => {
     const returnValue = await checkForRepoUpdates(
       [{ repoUrl: 'https://fakerepo.com', branch: 'main', destPath: 'mypath' }],
       ServerConnection.makeSettings({
-        baseUrl: "baseUrl"
-      }),
+        baseUrl: 'baseUrl'
+      })
     );
 
     expect(returnValue).toStrictEqual({
@@ -81,8 +81,8 @@ describe('nbgitpuller-jl-interface utils checkForRepoUpdates', () => {
     const returnValue = await checkForRepoUpdates(
       [{ repoUrl: 'https://fakerepo.com', branch: 'main', destPath: 'mypath' }],
       ServerConnection.makeSettings({
-        baseUrl: "baseUrl"
-      }),
+        baseUrl: 'baseUrl'
+      })
     );
 
     expect(returnValue).toStrictEqual({
@@ -151,8 +151,8 @@ describe('nbgitpuller-jl-interface utils checkForRepoUpdates', () => {
         { repoUrl: 'https://fakerepo.com', branch: 'main', destPath: 'mypath' }
       ],
       ServerConnection.makeSettings({
-        baseUrl: "baseUrl"
-      }),
+        baseUrl: 'baseUrl'
+      })
     );
     expect(returnValue).toStrictEqual({
       response: {
