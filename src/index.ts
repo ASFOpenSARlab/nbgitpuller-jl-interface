@@ -80,7 +80,12 @@ const plugin: JupyterFrontEndPlugin<void> = {
             .composite as boolean;
 
           if (reloadWidget) {
-            await createNbgitpullerWidget(app, pluginSettings, connectionSettings, commands);
+            await createNbgitpullerWidget(
+              app,
+              pluginSettings,
+              connectionSettings,
+              commands
+            );
             await repoUpdateProbe(pluginSettings, connectionSettings);
             await pluginSettings.set('reloadWidget', false);
           }

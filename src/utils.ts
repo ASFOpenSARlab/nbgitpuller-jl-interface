@@ -30,9 +30,15 @@ export interface IRepository {
   destPath: string;
 }
 
-export async function pullRepos(repositories: IRepository[], connectionSettings: ServerConnection.ISettings): Promise<void> {
+export async function pullRepos(
+  repositories: IRepository[],
+  connectionSettings: ServerConnection.ISettings
+): Promise<void> {
   // Pull each repository
-  const failed_updates = await makeNbgitpullerRequest(repositories, connectionSettings);
+  const failed_updates = await makeNbgitpullerRequest(
+    repositories,
+    connectionSettings
+  );
 
   // Update widget to all updated or pending updates
   await checkForUpdatesAndSetDisplay(repositories, connectionSettings);
@@ -66,7 +72,10 @@ export async function createNbgitpullerWidget(
     widget.dispose();
   }
 
-  const updateWidget = await nbgitpullerUpdateButton(repositories, connectionSettings);
+  const updateWidget = await nbgitpullerUpdateButton(
+    repositories,
+    connectionSettings
+  );
 
   const settingsWidget = await settingsButtonLinkWidget(commands);
 
@@ -108,7 +117,7 @@ export async function createNbgitpullerWidget(
 
 export async function nbgitpullerUpdateButton(
   repositories: IRepository[],
-  connectionSettings: ServerConnection.ISettings,
+  connectionSettings: ServerConnection.ISettings
 ): Promise<Widget> {
   const newWidget = new Widget();
   newWidget.id = update_btn_widget_id;
@@ -168,8 +177,15 @@ export async function settingsButtonLinkWidget(
   return newWidget;
 }
 
-export async function makeNbgitpullerRequest(repositories: IRepository[], connectionSettings: ServerConnection.ISettings) {
-  const url = URLExt.join(connectionSettings.baseUrl, 'nbgitpuller-jl-interface', 'gitpuller');
+export async function makeNbgitpullerRequest(
+  repositories: IRepository[],
+  connectionSettings: ServerConnection.ISettings
+) {
+  const url = URLExt.join(
+    connectionSettings.baseUrl,
+    'nbgitpuller-jl-interface',
+    'gitpuller'
+  );
   const xsrfToken = document.cookie
     .split(';')
     .find(row => row.startsWith('_xsrf='))
@@ -207,7 +223,7 @@ export async function makeNbgitpullerRequest(repositories: IRepository[], connec
 
 export async function repoUpdateProbe(
   pluginSettings: ISettingRegistry.ISettings,
-  connectionSettings: ServerConnection.ISettings,
+  connectionSettings: ServerConnection.ISettings
 ): Promise<void> {
   const repositories = pluginSettings.get('repos')
     .composite as any as IRepository[];
@@ -224,7 +240,7 @@ export async function repoUpdateProbe(
 
 export async function checkForRepoUpdates(
   repositories: IRepository[],
-  connectionSettings: ServerConnection.ISettings,
+  connectionSettings: ServerConnection.ISettings
 ): Promise<{
   response: { reposToBeUpdated: IRepository[]; reposWithErrors: IRepository[] };
   statuscode: number;
@@ -293,10 +309,13 @@ function createURLHTML(
 
 export async function checkForUpdatesAndSetDisplay(
   repositories: IRepository[],
-  connectionSettings: ServerConnection.ISettings,
+  connectionSettings: ServerConnection.ISettings
 ) {
   // Check for updates
-  const repoUpdates = await checkForRepoUpdates(repositories, connectionSettings);
+  const repoUpdates = await checkForRepoUpdates(
+    repositories,
+    connectionSettings
+  );
 
   // Update display
   if (repoUpdates['statuscode'] === 0) {
