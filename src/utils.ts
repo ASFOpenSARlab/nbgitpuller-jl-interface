@@ -53,9 +53,9 @@ async function createNamed(
   const split = path.split('/');
   let directories: string[];
   let filename: string | undefined;
-  if (type == 'directory') {
+  if (type === 'directory') {
     directories = split;
-  } else if (type == 'file') {
+  } else if (type === 'file') {
     filename = split.pop();
     directories = split;
   } else {
@@ -83,7 +83,7 @@ async function createNamed(
   }
 
   // Create file
-  if (type == 'file') {
+  if (type === 'file') {
     filename = filename ?? 'untitled';
     const pathNew = contents.resolvePath(cwd, filename);
     // Create file if it doesn't exist
