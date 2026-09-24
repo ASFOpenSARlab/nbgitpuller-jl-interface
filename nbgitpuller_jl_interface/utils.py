@@ -4,6 +4,7 @@ from shutil import which
 import pathlib
 import logging
 import os
+import traceback
 
 logger = logging.getLogger(__name__)
 
@@ -50,11 +51,19 @@ def pullRepo(repository_url: str, repository_branch: str, destination: str) -> d
         error = "Invalid destination path"
         return {"output": "", "error": error, "returncode": 1}
 
-    result = subprocess.run(
-        [command, repository_url, repository_branch, str(safe_dest)],
-        capture_output=True,
-        text=True
-    )
+    try:
+        result = subprocess.run(
+            [command, repository_url, repository_branch, str(safe_dest)],
+            capture_output=True,
+            text=True
+        )
+    except:
+        error = traceback.format_exc()
+        return {
+            "output": "",
+            "error": error,
+            "returncode": 1
+        }
     return {
         "output": result.stdout,
         "error": result.stderr,
