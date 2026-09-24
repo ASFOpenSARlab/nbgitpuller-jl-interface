@@ -80,7 +80,7 @@ const plugin: JupyterFrontEndPlugin<void> = {
               app,
               commands,
               pluginSettings,
-              connectionSettings,
+              connectionSettings
             );
             await repoUpdateProbe(pluginSettings, connectionSettings);
             await pluginSettings.set('reloadWidget', false);

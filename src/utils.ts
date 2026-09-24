@@ -32,12 +32,15 @@ export interface IRepository {
   destPath: string;
 }
 
-async function checkExists(contents: Contents.IManager, path:string): Promise<boolean>{
-  try{
+async function checkExists(
+  contents: Contents.IManager,
+  path: string
+): Promise<boolean> {
+  try {
     await contents.get(path);
-    return true
+    return true;
   } catch {
-    return false
+    return false;
   }
 }
 
@@ -45,58 +48,63 @@ async function createNamed(
   contents: Contents.IManager,
   type: string,
   path: string,
-  root: string = "/",
+  root: string = '/'
 ): Promise<void> {
-  const split = path.split("/");
-  var directories: string[];
-  var filename: string | undefined;
-  if(type == "directory"){
+  const split = path.split('/');
+  let directories: string[];
+  let filename: string | undefined;
+  if (type == 'directory') {
     directories = split;
-  }else if(type == "file"){
+  } else if (type == 'file') {
     filename = split.pop();
     directories = split;
-  }else{
-    throw new Error('createNamed type must be either "directory" or "file"')
+  } else {
+    throw new Error('createNamed type must be either "directory" or "file"');
   }
-  
+
   // Create directories if they don't exist
-  var cwd = root;
-  for(const dir of directories){
+  let cwd = root;
+  for (const dir of directories) {
     const cwdNew = contents.resolvePath(cwd, dir);
-    if (!(await checkExists(contents, cwdNew))){
+    if (!(await checkExists(contents, cwdNew))) {
       // Create new directory
       await contents.newUntitled({
-        ext: ".tmpdir",
+        ext: '.tmpdir',
         path: cwd,
-        type: 'directory',
+        type: 'directory'
       });
-      await contents.rename(contents.resolvePath(cwd, "Untitled Folder.tmpdir"), cwdNew);
+      await contents.rename(
+        contents.resolvePath(cwd, 'Untitled Folder.tmpdir'),
+        cwdNew
+      );
     }
     // Update cwd
     cwd = cwdNew;
   }
 
   // Create file
-  if(type=="file"){
-    filename = filename ?? "untitled";
+  if (type == 'file') {
+    filename = filename ?? 'untitled';
     const pathNew = contents.resolvePath(cwd, filename);
     // Create file if it doesn't exist
-    if (!(await checkExists(contents, pathNew))){
+    if (!(await checkExists(contents, pathNew))) {
       await contents.newUntitled({
-        ext: ".tmpfile",
+        ext: '.tmpfile',
         path: cwd,
-        type: 'file',
+        type: 'file'
       });
-      await contents.rename(contents.resolvePath(cwd, "untitled.tmpfile"), pathNew);
+      await contents.rename(
+        contents.resolvePath(cwd, 'untitled.tmpfile'),
+        pathNew
+      );
     }
   }
-
 }
 
 export async function pullRepos(
   contents: Contents.IManager,
   repositories: IRepository[],
-  connectionSettings: ServerConnection.ISettings,
+  connectionSettings: ServerConnection.ISettings
 ): Promise<void> {
   // Pull each repository
   const failed_updates = await makeNbgitpullerRequest(
@@ -117,27 +125,20 @@ export async function pullRepos(
       'If you require assistance with resolving this issue, please contact your platform administrators.';
 
     // Write errors to logs
-    var logContent: string = "";
+    let logContent: string = '';
     for (const failure of failed_updates) {
       logContent += failure['reason'];
-      logContent += "\n#################################################\n\n";
+      logContent += '\n#################################################\n\n';
     }
 
     const id = new Date().toISOString();
-    const logPath = `logs/nbgitpuller/log_${id}.txt`
-    createNamed(
-      contents,
-      "file",
-      logPath,
-    )
-    await contents.save(
-      logPath,
-      {
-        type: "file",
-        format: "text",
-        content: logContent,
-      }
-    )
+    const logPath = `logs/nbgitpuller/log_${id}.txt`;
+    createNamed(contents, 'file', logPath);
+    await contents.save(logPath, {
+      type: 'file',
+      format: 'text',
+      content: logContent
+    });
 
     // Notify users of any failure
     alert(failure_message);
@@ -148,7 +149,7 @@ export async function createNbgitpullerWidget(
   app: JupyterFrontEnd,
   commands: CommandRegistry,
   pluginSettings: ISettingRegistry.ISettings,
-  connectionSettings: ServerConnection.ISettings,
+  connectionSettings: ServerConnection.ISettings
 ): Promise<void> {
   const repositories = pluginSettings.get('repos')
     .composite as any as IRepository[];
@@ -208,7 +209,7 @@ export async function createNbgitpullerWidget(
 export async function nbgitpullerUpdateButton(
   contents: Contents.IManager,
   repositories: IRepository[],
-  connectionSettings: ServerConnection.ISettings,
+  connectionSettings: ServerConnection.ISettings
 ): Promise<Widget> {
   const newWidget = new Widget();
   newWidget.id = update_btn_widget_id;
