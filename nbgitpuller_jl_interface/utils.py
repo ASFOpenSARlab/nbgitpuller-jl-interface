@@ -57,6 +57,11 @@ def pullRepo(repository_url: str, repository_branch: str, destination: str) -> d
             capture_output=True,
             text=True
         )
+        return {
+            "output": result.stdout,
+            "error": result.stderr,
+            "returncode": result.returncode
+        }
     except:
         error = traceback.format_exc()
         return {
@@ -64,11 +69,6 @@ def pullRepo(repository_url: str, repository_branch: str, destination: str) -> d
             "error": error,
             "returncode": 1
         }
-    return {
-        "output": result.stdout,
-        "error": result.stderr,
-        "returncode": result.returncode
-    }
 
 def checkIfRepoExists(repository_url: str, branch: str) -> dict[str, Any]:
     # Get git command
