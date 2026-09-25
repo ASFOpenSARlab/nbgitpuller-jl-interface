@@ -37,6 +37,9 @@ async function checkExists(
   path: string
 ): Promise<boolean> {
   try {
+    // Throws an error if path does not exist
+    // SyntaxError: JSON.parse: unexpected keyword at line 1 column 1 of the JSON data
+    // file or directory <path> does not exist
     await contents.get(path);
     return true;
   } catch {
@@ -65,7 +68,7 @@ async function createNamed(
   // Create directories if they don't exist
   let cwd = root;
   for (const dir of directories) {
-    const cwdNew = contents.resolvePath(cwd, dir);
+    const cwdNew = await contents.resolvePath(cwd, dir);
     if (!(await checkExists(contents, cwdNew))) {
       // Create new directory
       await contents.newUntitled({
@@ -74,7 +77,7 @@ async function createNamed(
         type: 'directory'
       });
       await contents.rename(
-        contents.resolvePath(cwd, 'Untitled Folder.tmpdir'),
+        await contents.resolvePath(cwd, 'Untitled Folder.tmpdir'),
         cwdNew
       );
     }
@@ -85,7 +88,7 @@ async function createNamed(
   // Create file
   if (type === 'file') {
     filename = filename ?? 'untitled';
-    const pathNew = contents.resolvePath(cwd, filename);
+    const pathNew = await contents.resolvePath(cwd, filename);
     // Create file if it doesn't exist
     if (!(await checkExists(contents, pathNew))) {
       await contents.newUntitled({
@@ -94,7 +97,7 @@ async function createNamed(
         type: 'file'
       });
       await contents.rename(
-        contents.resolvePath(cwd, 'untitled.tmpfile'),
+        await contents.resolvePath(cwd, 'untitled.tmpfile'),
         pathNew
       );
     }
@@ -113,11 +116,10 @@ async function writeFile(
   fileContent: string,
   { append = false, fileFormat = 'text', root = '/' }: writeFileOptions = {}
 ) {
-  const fullPath = contents.resolvePath(root, path);
+  const fullPath = await contents.resolvePath(root, path);
   if (append) {
     try {
       const existingContent = await contents.get(fullPath);
-      console.log(existingContent);
       fileContent = existingContent.content + fileContent;
     } catch {
       // File doesn't exist yet
@@ -165,8 +167,8 @@ export async function pullRepos(
 
     const id = `${now.getFullYear()}-${now.getMonth()}-${now.getDate()}`;
     const logPath = `logs/nbgitpuller/log_${id}.txt`;
-    createNamed(contents, 'file', logPath);
-    writeFile(contents, logPath, logContent, {
+    await createNamed(contents, 'file', logPath);
+    await writeFile(contents, logPath, logContent, {
       append: true
     });
 
