@@ -78,9 +78,9 @@ const plugin: JupyterFrontEndPlugin<void> = {
           if (reloadWidget) {
             await createNbgitpullerWidget(
               app,
+              commands,
               pluginSettings,
-              connectionSettings,
-              commands
+              connectionSettings
             );
             await repoUpdateProbe(pluginSettings, connectionSettings);
             await pluginSettings.set('reloadWidget', false);

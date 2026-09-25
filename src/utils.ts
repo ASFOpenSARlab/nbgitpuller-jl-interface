@@ -6,6 +6,8 @@ import { Widget, BoxPanel } from '@lumino/widgets';
 
 import { ISettingRegistry } from '@jupyterlab/settingregistry';
 
+import { Contents } from '@jupyterlab/services';
+
 import { URLExt } from '@jupyterlab/coreutils';
 
 import { CommandRegistry } from '@lumino/commands';
@@ -30,7 +32,109 @@ export interface IRepository {
   destPath: string;
 }
 
+async function checkExists(
+  contents: Contents.IManager,
+  path: string
+): Promise<boolean> {
+  try {
+    // Throws an error if path does not exist
+    // SyntaxError: JSON.parse: unexpected keyword at line 1 column 1 of the JSON data
+    // file or directory <path> does not exist
+    await contents.get(path);
+    return true;
+  } catch {
+    return false;
+  }
+}
+
+async function createNamed(
+  contents: Contents.IManager,
+  type: string,
+  path: string,
+  root: string = '/'
+): Promise<void> {
+  const split = path.split('/');
+  let directories: string[];
+  let filename: string | undefined;
+  if (type === 'directory') {
+    directories = split;
+  } else if (type === 'file') {
+    filename = split.pop();
+    directories = split;
+  } else {
+    throw new Error('createNamed type must be either "directory" or "file"');
+  }
+
+  // Create directories if they don't exist
+  let cwd = root;
+  for (const dir of directories) {
+    const cwdNew = await contents.resolvePath(cwd, dir);
+    if (!(await checkExists(contents, cwdNew))) {
+      // Create new directory
+      await contents.newUntitled({
+        ext: '.tmpdir',
+        path: cwd,
+        type: 'directory'
+      });
+      await contents.rename(
+        await contents.resolvePath(cwd, 'Untitled Folder.tmpdir'),
+        cwdNew
+      );
+    }
+    // Update cwd
+    cwd = cwdNew;
+  }
+
+  // Create file
+  if (type === 'file') {
+    filename = filename ?? 'untitled';
+    const pathNew = await contents.resolvePath(cwd, filename);
+    // Create file if it doesn't exist
+    if (!(await checkExists(contents, pathNew))) {
+      await contents.newUntitled({
+        ext: '.tmpfile',
+        path: cwd,
+        type: 'file'
+      });
+      await contents.rename(
+        await contents.resolvePath(cwd, 'untitled.tmpfile'),
+        pathNew
+      );
+    }
+  }
+}
+
+type writeFileOptions = {
+  append?: boolean;
+  fileFormat?: Contents.FileFormat;
+  root?: string;
+};
+
+async function writeFile(
+  contents: Contents.IManager,
+  path: string,
+  fileContent: string,
+  { append = false, fileFormat = 'text', root = '/' }: writeFileOptions = {}
+) {
+  const fullPath = await contents.resolvePath(root, path);
+  if (append) {
+    try {
+      const existingContent = await contents.get(fullPath);
+      fileContent = existingContent.content + fileContent;
+    } catch {
+      // File doesn't exist yet
+    }
+  }
+
+  await contents.save(fullPath, {
+    type: 'file',
+    format: fileFormat,
+    content: fileContent
+  });
+}
+
 export async function pullRepos(
+  contents: Contents.IManager,
   repositories: IRepository[],
   connectionSettings: ServerConnection.ISettings
 ): Promise<void> {
@@ -43,7 +147,7 @@ export async function pullRepos(
   // Update widget to all updated or pending updates
   await checkForUpdatesAndSetDisplay(repositories, connectionSettings);
 
-  // Notify users of any failure
+  // Catch errors
   if (failed_updates.length !== 0) {
     let failure_message = 'Failed to update the following repositories: \n';
     for (const failure of failed_updates) {
@@ -51,16 +155,33 @@ export async function pullRepos(
     }
     failure_message +=
       'If you require assistance with resolving this issue, please contact your platform administrators.';
-    console.log(failure_message);
+
+    // Write errors to logs
+    const now = new Date();
+    let logContent: string = '';
+    for (const failure of failed_updates) {
+      logContent += `${now.toISOString()}\n\n`;
+      logContent += failure['reason'];
+      logContent += '\n#################################################\n\n';
+    }
+
+    const id = `${now.getFullYear()}-${now.getMonth()}-${now.getDate()}`;
+    const logPath = `logs/nbgitpuller/log_${id}.txt`;
+    await createNamed(contents, 'file', logPath);
+    await writeFile(contents, logPath, logContent, {
+      append: true
+    });
+
+    // Notify users of any failure
     alert(failure_message);
   }
 }
 
 export async function createNbgitpullerWidget(
   app: JupyterFrontEnd,
+  commands: CommandRegistry,
   pluginSettings: ISettingRegistry.ISettings,
-  connectionSettings: ServerConnection.ISettings,
-  commands: CommandRegistry
+  connectionSettings: ServerConnection.ISettings
 ): Promise<void> {
   const repositories = pluginSettings.get('repos')
     .composite as any as IRepository[];
@@ -71,8 +192,10 @@ export async function createNbgitpullerWidget(
   if (widget) {
     widget.dispose();
   }
+  const { contents } = app.serviceManager;
 
   const updateWidget = await nbgitpullerUpdateButton(
+    contents,
     repositories,
     connectionSettings
   );
@@ -116,6 +239,7 @@ export async function createNbgitpullerWidget(
 }
 
 export async function nbgitpullerUpdateButton(
+  contents: Contents.IManager,
   repositories: IRepository[],
   connectionSettings: ServerConnection.ISettings
 ): Promise<Widget> {
@@ -136,7 +260,7 @@ export async function nbgitpullerUpdateButton(
     const pendingTooltip = 'Updating GitHub Repositories...';
     await setUpdateButtonDisplay(WidgetState.Updating, pendingTooltip);
 
-    await pullRepos(repositories, connectionSettings);
+    await pullRepos(contents, repositories, connectionSettings);
 
     // Unset updating flag
     currentlyUpdating = false;

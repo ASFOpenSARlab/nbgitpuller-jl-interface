@@ -2,6 +2,12 @@
 
 <!-- <START NEW CHANGELOG ENTRY> -->
 
+## 1.1.0a1
+
+No merged PRs
+
+<!-- <END NEW CHANGELOG ENTRY> -->
+
 ## 1.0.2
 
 ([Full Changelog](https://github.com/ASFOpenSARlab/nbgitpuller-jl-interface/compare/v1.0.1...0b95da314d9b73591f42491947d7b05564f5d620))
@@ -19,8 +25,6 @@ See [our definition of contributors](https://github-activity.readthedocs.io/en/l
 ([GitHub contributors page for this release](https://github.com/ASFOpenSARlab/nbgitpuller-jl-interface/graphs/contributors?from=2026-09-01&to=2026-09-21&type=c))
 
 @dgpalmieri ([activity](https://github.com/search?q=repo%3AASFOpenSARlab%2Fnbgitpuller-jl-interface+involves%3Adgpalmieri+updated%3A2026-09-01..2026-09-21&type=Issues)) | @emlundell ([activity](https://github.com/search?q=repo%3AASFOpenSARlab%2Fnbgitpuller-jl-interface+involves%3Aemlundell+updated%3A2026-09-01..2026-09-21&type=Issues)) | @segallagher ([activity](https://github.com/search?q=repo%3AASFOpenSARlab%2Fnbgitpuller-jl-interface+involves%3Asegallagher+updated%3A2026-09-01..2026-09-21&type=Issues))
-
-<!-- <END NEW CHANGELOG ENTRY> -->
 
 ## 1.0.1
 
