@@ -101,6 +101,36 @@ async function createNamed(
   }
 }
 
+type writeFileOptions = {
+  append?: boolean;
+  fileFormat?: Contents.FileFormat;
+  root?: string;
+};
+
+async function writeFile(
+  contents: Contents.IManager,
+  path: string,
+  fileContent: string,
+  { append = false, fileFormat = 'text', root = '/' }: writeFileOptions = {}
+) {
+  const fullPath = contents.resolvePath(root, path);
+  if (append) {
+    try {
+      const existingContent = await contents.get(fullPath);
+      console.log(existingContent);
+      fileContent = existingContent.content + fileContent;
+    } catch {
+      // File doesn't exist yet
+    }
+  }
+
+  await contents.save(fullPath, {
+    type: 'file',
+    format: fileFormat,
+    content: fileContent
+  });
+}
+
 export async function pullRepos(
   contents: Contents.IManager,
   repositories: IRepository[],
@@ -125,19 +155,19 @@ export async function pullRepos(
       'If you require assistance with resolving this issue, please contact your platform administrators.';
 
     // Write errors to logs
+    const now = new Date();
     let logContent: string = '';
     for (const failure of failed_updates) {
+      logContent += `${now.toISOString()}\n\n`;
       logContent += failure['reason'];
       logContent += '\n#################################################\n\n';
     }
 
-    const id = new Date().toISOString();
+    const id = `${now.getFullYear()}-${now.getMonth()}-${now.getDate()}`;
     const logPath = `logs/nbgitpuller/log_${id}.txt`;
     createNamed(contents, 'file', logPath);
-    await contents.save(logPath, {
-      type: 'file',
-      format: 'text',
-      content: logContent
+    writeFile(contents, logPath, logContent, {
+      append: true
     });
 
     // Notify users of any failure
