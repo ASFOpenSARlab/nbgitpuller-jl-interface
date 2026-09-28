@@ -51,9 +51,10 @@ To apply changes, the widget must be reloaded. Check the `Reload Widget` checkbo
 #### Add More Repositories
 
 In nbgitpuller-jl-interface settings, under Repositories click the plus icon. Fill out the following fields.
-* repoUrl: The repository URL
-* branch: The branch of the repository to watch
-* destPath: The destination folder to download the repository to
+
+- repoUrl: The repository URL
+- branch: The branch of the repository to watch
+- destPath: The destination folder to download the repository to
 
 ![Settings](./images/add_repo.png)
 
