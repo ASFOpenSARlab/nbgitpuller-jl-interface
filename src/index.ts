@@ -28,7 +28,7 @@ export function getJupyterAppInstance(app?: JupyterFrontEnd): JupyterFrontEnd {
 
 const plugin: JupyterFrontEndPlugin<void> = {
   id: 'nbgitpuller-jl-interface:plugin',
-  description: 'A human interface with nbgitpuller in JupyterBook',
+  description: 'A human interface with nbgitpuller in JupyterLab',
   autoStart: true,
   optional: [],
   requires: [

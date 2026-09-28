@@ -2,7 +2,7 @@
 
 [![Github Actions Status](https://github.com/ASFOpenSARlab/nbgitpuller-jl-interface/workflows/Build/badge.svg)](https://github.com/ASFOpenSARlab/nbgitpuller-jl-interface/actions/workflows/build.yml)
 
-A human interface with nbgitpuller in JupyterBook
+A human interface with nbgitpuller in JupyterLab
 
 This extension is composed of a Python package named `nbgitpuller_jl_interface`
 for the server extension and a NPM package named `nbgitpuller-jl-interface`

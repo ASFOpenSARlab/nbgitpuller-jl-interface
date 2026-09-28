@@ -9,7 +9,7 @@ has_binder: false
 has_settings: true
 kind: frontend-and-server
 labextension_name: nbgitpuller-jl-interface
-project_short_description: A human interface with nbgitpuller in JupyterBook
+project_short_description: A human interface with nbgitpuller in JupyterLab
 python_name: nbgitpuller_jl_interface
 repository: https://github.com/ASFOpenSARlab/nbgitpuller-jl-interface
 test: true
